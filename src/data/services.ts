@@ -1,0 +1,175 @@
+import { Bot, Code2, Cpu, Globe2, Layers, Workflow, type LucideIcon } from "lucide-react";
+
+export interface ServiceItem {
+  slug: string;
+  icon: LucideIcon;
+  title: string;
+  tagline: string;
+  desc: string;
+  highlights: string[];
+  deliverables: string[];
+  useCases: { title: string; desc: string }[];
+}
+
+export const services: ServiceItem[] = [
+  {
+    slug: "web-development",
+    icon: Globe2,
+    title: "Web Development",
+    tagline: "Fast, scalable websites built for results.",
+    desc: "We design and develop high-performance websites and web applications built around your business goals — not just aesthetics. From landing pages to complex portals, we deliver clean, maintainable code that scales.",
+    highlights: [
+      "Custom UI/UX design tailored to your brand",
+      "SEO-optimised, accessible and mobile-first",
+      "React, Next.js and modern frontend stacks",
+      "CMS integration (Sanity, Contentful, Strapi)",
+      "Performance-first — Core Web Vitals optimised",
+    ],
+    deliverables: [
+      "Fully responsive website or web app",
+      "Admin panel / CMS setup",
+      "Deployment on cloud infrastructure",
+      "Post-launch support & documentation",
+    ],
+    useCases: [
+      { title: "Corporate Websites", desc: "Professional brand presence with fast load times and strong SEO." },
+      { title: "E-commerce Stores", desc: "Product catalogues, cart, checkout and payment integrations." },
+      { title: "SaaS Dashboards", desc: "Complex data-driven interfaces with real-time updates." },
+      { title: "Landing Pages", desc: "Conversion-focused pages for campaigns and product launches." },
+    ],
+  },
+  {
+    slug: "software-development",
+    icon: Code2,
+    title: "Software Development",
+    tagline: "Custom software built around how you work.",
+    desc: "We build custom software systems designed around your specific workflows, users and operational requirements. No off-the-shelf compromises — just clean, scalable software that solves your actual problems.",
+    highlights: [
+      "Full-stack development (Node.js, Python, React)",
+      "API design and third-party integrations",
+      "Database architecture and optimisation",
+      "Microservices and monolith architectures",
+      "Code reviews, testing and CI/CD pipelines",
+    ],
+    deliverables: [
+      "Production-ready application",
+      "API documentation",
+      "Test suite and CI/CD setup",
+      "Deployment and infrastructure setup",
+    ],
+    useCases: [
+      { title: "Internal Tools", desc: "Custom dashboards and tools that replace manual spreadsheet workflows." },
+      { title: "Client Portals", desc: "Secure portals for clients to track orders, projects or data." },
+      { title: "Booking Systems", desc: "Appointment and reservation systems with calendar integrations." },
+      { title: "Inventory Management", desc: "Real-time stock tracking across warehouses and locations." },
+    ],
+  },
+  {
+    slug: "automation",
+    icon: Workflow,
+    title: "Automation",
+    tagline: "Eliminate repetitive work. Connect your systems.",
+    desc: "We automate repetitive business processes and connect your existing tools so your team can focus on what matters. From simple task automation to complex multi-system workflows, we reduce manual work and human error.",
+    highlights: [
+      "Business process automation (n8n, Zapier, Make)",
+      "API integrations between existing tools",
+      "Scheduled jobs and background processing",
+      "Email, CRM and notification automation",
+      "Data sync across platforms",
+    ],
+    deliverables: [
+      "Automated workflow setup and testing",
+      "Integration documentation",
+      "Monitoring and error alerting",
+      "Handover training for your team",
+    ],
+    useCases: [
+      { title: "Lead Management", desc: "Auto-capture leads from forms and route them to your CRM." },
+      { title: "Invoice Processing", desc: "Automate invoice generation, sending and follow-ups." },
+      { title: "Report Generation", desc: "Scheduled reports delivered to your inbox automatically." },
+      { title: "Onboarding Flows", desc: "Automated client or employee onboarding sequences." },
+    ],
+  },
+  {
+    slug: "ai-platforms",
+    icon: Bot,
+    title: "AI Platforms",
+    tagline: "Intelligent systems that make your business smarter.",
+    desc: "We build AI-powered tools and platforms that help your business make smarter decisions, automate complex tasks and deliver better experiences. From chatbots to custom ML pipelines, we make AI practical and production-ready.",
+    highlights: [
+      "LLM integrations (OpenAI, Anthropic, Gemini)",
+      "Custom AI chatbots and assistants",
+      "RAG pipelines for document intelligence",
+      "AI-powered search and recommendations",
+      "Model fine-tuning and prompt engineering",
+    ],
+    deliverables: [
+      "Production AI feature or platform",
+      "API endpoints for AI capabilities",
+      "Evaluation and monitoring setup",
+      "Documentation and usage guidelines",
+    ],
+    useCases: [
+      { title: "AI Customer Support", desc: "Chatbots that resolve queries 24/7 using your knowledge base." },
+      { title: "Document Analysis", desc: "Extract insights from contracts, reports and PDFs automatically." },
+      { title: "Content Generation", desc: "AI-assisted content creation tools for your team." },
+      { title: "Smart Search", desc: "Semantic search across your product catalogue or knowledge base." },
+    ],
+  },
+  {
+    slug: "erp-crm",
+    icon: Layers,
+    title: "ERP & CRM",
+    tagline: "Unify your operations, sales and customer data.",
+    desc: "We implement and customise ERP and CRM systems that bring your entire business under one roof. Whether you need a full implementation or custom modules on top of existing platforms, we make your systems work together.",
+    highlights: [
+      "ERP implementation and customisation",
+      "CRM setup, migration and automation",
+      "Custom modules and workflow configuration",
+      "Data migration from legacy systems",
+      "Staff training and change management",
+    ],
+    deliverables: [
+      "Configured and tested ERP/CRM system",
+      "Data migration and validation",
+      "User roles and permissions setup",
+      "Training sessions and documentation",
+    ],
+    useCases: [
+      { title: "Sales Pipeline Management", desc: "Track leads, deals and revenue from first contact to close." },
+      { title: "Inventory & Procurement", desc: "Real-time stock levels, purchase orders and supplier management." },
+      { title: "HR & Payroll", desc: "Employee records, leave management and payroll processing." },
+      { title: "Finance & Accounting", desc: "Invoicing, expenses and financial reporting in one place." },
+    ],
+  },
+  {
+    slug: "it-solutions",
+    icon: Cpu,
+    title: "IT Solutions",
+    tagline: "Reliable infrastructure for modern businesses.",
+    desc: "We provide end-to-end IT solutions — from cloud infrastructure setup to ongoing support. Whether you're scaling up or just getting started, we make sure your technology foundation is solid, secure and cost-efficient.",
+    highlights: [
+      "Cloud setup and migration (AWS, GCP, Azure)",
+      "Server management and DevOps",
+      "Security audits and hardening",
+      "Backup and disaster recovery planning",
+      "IT support and managed services",
+    ],
+    deliverables: [
+      "Infrastructure setup and documentation",
+      "Security configuration and audit report",
+      "Monitoring and alerting setup",
+      "Ongoing support SLA",
+    ],
+    useCases: [
+      { title: "Cloud Migration", desc: "Move from on-premise to cloud with zero downtime." },
+      { title: "Startup Infrastructure", desc: "Cost-efficient cloud setup for early-stage companies." },
+      { title: "Security Hardening", desc: "Audit and fix vulnerabilities across your stack." },
+      { title: "DevOps Setup", desc: "CI/CD pipelines, containerisation and deployment automation." },
+    ],
+  },
+];
+
+export function getServiceBySlug(slug: string): ServiceItem | undefined {
+  return services.find((s) => s.slug === slug);
+}

@@ -1,0 +1,154 @@
+import { Link, useNavigate } from "react-router-dom";
+import { ArrowUpRight, Mail, MapPin, Phone } from "lucide-react";
+import CClogo from "../assets/CClogo.png";
+import { services } from "../data/services";
+
+const company = [
+  { label: "About Us", section: "about" },
+  { label: "Why Comerade", section: "why" },
+  { label: "Our Work", section: "work" },
+  { label: "Contact", href: "/contact" },
+];
+
+const resources = [
+  { label: "All Services", href: "/services" },
+  { label: "Industries", href: "#" },
+  { label: "Blog", href: "#" },
+  { label: "Case Studies", href: "#" },
+];
+
+export default function Footer() {
+  const navigate = useNavigate();
+
+  const scrollTo = (section: string) => {
+    const doScroll = () => {
+      const el = document.getElementById(section);
+      if (el) el.scrollIntoView({ behavior: "smooth" });
+    };
+    if (window.location.pathname !== "/") {
+      navigate("/");
+      setTimeout(doScroll, 300);
+    } else {
+      doScroll();
+    }
+  };
+
+  return (
+    <footer className="relative border-t border-black/[0.07] bg-white text-[#05070b] dark:border-white/[0.07] dark:bg-[#05070b] dark:text-white">
+      {/* Top glow */}
+      <div className="pointer-events-none absolute left-1/2 top-0 h-[1px] w-[60%] -translate-x-1/2 bg-gradient-to-r from-transparent via-[#58adff]/40 to-transparent" />
+
+      <div className="mx-auto max-w-[1280px] px-5 sm:px-8 lg:px-10">
+
+        {/* Main grid */}
+        <div className="grid gap-12 py-16 sm:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1fr]">
+
+          {/* Brand col */}
+          <div>
+            <Link to="/" className="inline-block">
+              <img src={CClogo} alt="Comerade Coders" className="h-[48px] w-auto object-contain" />
+            </Link>
+            <p className="mt-4 max-w-[280px] text-[14px] leading-6 text-black/50 dark:text-white/45">
+              We build software, automation and AI solutions that help businesses grow faster and operate smarter.
+            </p>
+
+            {/* Contact info */}
+            <div className="mt-6 flex flex-col gap-3">
+              <a href="mailto:hello@comeradecoders.com" className="flex items-center gap-2.5 text-[13px] text-black/50 transition-colors hover:text-[#2f8fe6] dark:text-white/45 dark:hover:text-[#58adff]">
+                <Mail size={14} className="shrink-0" />
+                info@comradecoders.com
+
+              </a>
+              <a href="tel:+911234567890" className="flex items-center gap-2.5 text-[13px] text-black/50 transition-colors hover:text-[#2f8fe6] dark:text-white/45 dark:hover:text-[#58adff]">
+                <Phone size={14} className="shrink-0" />
+                +91 8128564899
+              </a>
+              <span className="flex items-center gap-2.5 text-[13px] text-black/50 dark:text-white/45">
+                <MapPin size={14} className="shrink-0" />
+                India
+              </span>
+            </div>
+          </div>
+
+          {/* Services col */}
+          <div>
+            <p className="mb-4 text-[11px] font-bold uppercase tracking-[0.18em] text-black/35 dark:text-white/30">
+              Services
+            </p>
+            <ul className="flex flex-col gap-2.5">
+              {services.map((s) => (
+                <li key={s.slug}>
+                  <Link
+                    to={`/services/${s.slug}`}
+                    className="group flex items-center gap-1 text-[13.5px] text-black/55 transition-colors hover:text-[#2f8fe6] dark:text-white/50 dark:hover:text-[#58adff]"
+                  >
+                    {s.title}
+                    <ArrowUpRight size={11} className="opacity-0 transition-opacity group-hover:opacity-100" />
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Company col */}
+          <div>
+            <p className="mb-4 text-[11px] font-bold uppercase tracking-[0.18em] text-black/35 dark:text-white/30">
+              Company
+            </p>
+            <ul className="flex flex-col gap-2.5">
+              {company.map((item) => (
+                <li key={item.label}>
+                  {item.href ? (
+                    <Link
+                      to={item.href}
+                      className="text-[13.5px] text-black/55 transition-colors hover:text-[#2f8fe6] dark:text-white/50 dark:hover:text-[#58adff]"
+                    >
+                      {item.label}
+                    </Link>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => scrollTo(item.section as string)}
+                      className="text-[13.5px] text-black/55 transition-colors hover:text-[#2f8fe6] dark:text-white/50 dark:hover:text-[#58adff]"
+                    >
+                      {item.label}
+                    </button>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Resources col */}
+          <div>
+            <p className="mb-4 text-[11px] font-bold uppercase tracking-[0.18em] text-black/35 dark:text-white/30">
+              Resources
+            </p>
+            <ul className="flex flex-col gap-2.5">
+              {resources.map((item) => (
+                <li key={item.label}>
+                  <Link
+                    to={item.href}
+                    className="group flex items-center gap-1 text-[13.5px] text-black/55 transition-colors hover:text-[#2f8fe6] dark:text-white/50 dark:hover:text-[#58adff]"
+                  >
+                    {item.label}
+                    <ArrowUpRight size={11} className="opacity-0 transition-opacity group-hover:opacity-100" />
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        {/* Bottom bar */}
+        <div className="flex flex-col items-center justify-between gap-3 border-t border-black/[0.06] py-6 text-[12px] text-black/35 sm:flex-row dark:border-white/[0.06] dark:text-white/30">
+          <p>© {new Date().getFullYear()} Comerade Coders. All rights reserved.</p>
+          <div className="flex gap-5">
+            <Link to="/contact" className="transition-colors hover:text-black/60 dark:hover:text-white/60">Privacy Policy</Link>
+            <Link to="/contact" className="transition-colors hover:text-black/60 dark:hover:text-white/60">Terms of Service</Link>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+}
