@@ -1,11 +1,14 @@
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowUpRight, Mail, MapPin, Phone } from "lucide-react";
-import CClogo from "../assets/CClogo.png";
+import { FaFacebookF, FaInstagram, FaLinkedinIn } from "react-icons/fa";
+import darkLogo from "../assets/logoCC.png";
+import lightLogo from "../assets/logoCC White.png";
 import { services } from "../data/services";
+import { useTheme } from "../context/ThemeContext";
 
 const company = [
-  { label: "About Us", section: "about" },
-  { label: "Why Comerade", section: "why" },
+  { label: "About Us", href: "/about" },
+  { label: "Why Comrade", section: "why" },
   { label: "Our Work", section: "work" },
   { label: "Contact", href: "/contact" },
 ];
@@ -17,8 +20,15 @@ const resources = [
   { label: "Case Studies", href: "#" },
 ];
 
+const socialLinks = [
+  { label: "Instagram", href: "https://www.instagram.com/comrade_coders/", icon: FaInstagram },
+  { label: "Facebook", href: "https://www.facebook.com/people/Comrade-Coders/61576269116532/", icon: FaFacebookF },
+  { label: "LinkedIn", href: "https://www.linkedin.com/company/comrade-coders/", icon: FaLinkedinIn },
+];
+
 export default function Footer() {
   const navigate = useNavigate();
+  const { isDark } = useTheme();
 
   const scrollTo = (section: string) => {
     const doScroll = () => {
@@ -46,7 +56,15 @@ export default function Footer() {
           {/* Brand col */}
           <div>
             <Link to="/" className="inline-block">
-              <img src={CClogo} alt="Comerade Coders" className="h-[48px] w-auto object-contain" />
+              <span className="relative block h-16 w-44 overflow-hidden">
+                <img
+                  src={isDark ? darkLogo : lightLogo}
+                  alt="Comrade Coders"
+                  width={512}
+                  height={512}
+                  className="absolute left-0 top-1/2 h-auto w-full max-w-none -translate-y-1/2 object-contain"
+                />
+              </span>
             </Link>
             <p className="mt-4 max-w-[280px] text-[14px] leading-6 text-black/50 dark:text-white/45">
               We build software, automation and AI solutions that help businesses grow faster and operate smarter.
@@ -67,6 +85,21 @@ export default function Footer() {
                 <MapPin size={14} className="shrink-0" />
                 India
               </span>
+            </div>
+
+            <div className="mt-7 flex items-center gap-2.5">
+              {socialLinks.map(({ label, href, icon: Icon }) => (
+                <a
+                  key={label}
+                  href={href}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label={`Visit Comrade Coders on ${label}`}
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-black/[0.10] text-black/50 transition-all duration-200 hover:-translate-y-0.5 hover:border-[#2f8fe6]/40 hover:bg-[#2f8fe6]/10 hover:text-[#2f8fe6] dark:border-white/[0.12] dark:text-white/50 dark:hover:border-[#58adff]/40 dark:hover:bg-[#58adff]/10 dark:hover:text-[#58adff]"
+                >
+                  <Icon size={16} />
+                </a>
+              ))}
             </div>
           </div>
 
@@ -142,7 +175,7 @@ export default function Footer() {
 
         {/* Bottom bar */}
         <div className="flex flex-col items-center justify-between gap-3 border-t border-black/[0.06] py-6 text-[12px] text-black/35 sm:flex-row dark:border-white/[0.06] dark:text-white/30">
-          <p>© {new Date().getFullYear()} Comerade Coders. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} Comrade Coders. All rights reserved.</p>
           <div className="flex gap-5">
             <Link to="/contact" className="transition-colors hover:text-black/60 dark:hover:text-white/60">Privacy Policy</Link>
             <Link to="/contact" className="transition-colors hover:text-black/60 dark:hover:text-white/60">Terms of Service</Link>

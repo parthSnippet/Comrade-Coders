@@ -52,7 +52,7 @@ export default function ContactPage() {
       return;
     }
 
-    window.location.href = `mailto:info@comradecoders.com?subject=${encodeURIComponent("Book a Call")}&body=${encodeURIComponent("Hi Comerade Coders, I would like to book a call.\n\nPreferred time:\n\nCompany:\n\nProject overview:")}`;
+    window.location.href = `mailto:info@comradecoders.com?subject=${encodeURIComponent("Book a Call")}&body=${encodeURIComponent("Hi Comrade Coders, I would like to book a call.\n\nPreferred time:\n\nCompany:\n\nProject overview:")}`;
   };
 
   const handleChange = (

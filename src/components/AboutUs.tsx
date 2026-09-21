@@ -66,7 +66,7 @@ function AboutUs() {
           </div>
           <div>
             <p className="text-[15px] leading-7 text-black/55 dark:text-white/55">
-              Comerade Coders is a full-stack software company built for businesses that want real results.
+              Comrade Coders is a full-stack software company built for businesses that want real results.
               We combine technical depth with business understanding to deliver systems that actually work —
               on time, on budget, and built to last.
             </p>

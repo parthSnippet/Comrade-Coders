@@ -13,7 +13,6 @@ import {
   Workflow,
   Zap,
 } from "lucide-react";
-import VantaBackground from "./vantabackground";
 
 const techStack = [
   { icon: Code2, label: "React" },
@@ -140,14 +139,12 @@ function Hero() {
             <div className="absolute inset-10 rounded-full bg-[#328fe8]/10 blur-[70px]" />
 
             <div className="relative aspect-square overflow-hidden rounded-[2rem]">
-              <VantaBackground />
-
               {/* Center — static, no animation */}
               <div className="absolute left-1/2 top-1/2 z-20 flex h-[148px] w-[148px] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-[#58adff]/25 bg-[#0b1622]/90 shadow-[0_0_40px_rgba(88,173,255,0.18)] sm:h-[172px] sm:w-[172px]">
                 <div className="flex flex-col items-center">
                   <Cpu size={36} strokeWidth={1.3} className="text-[#58adff]" />
                   <span className="mt-2.5 font-['Montserrat'] text-[13px] font-semibold tracking-wide text-white">
-                    COMERADE
+                    COMRADE
                   </span>
                   <span className="mt-1 text-[8px] uppercase tracking-[0.3em] text-white/35">
                     Coders

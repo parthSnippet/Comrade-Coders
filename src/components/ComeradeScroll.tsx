@@ -51,7 +51,7 @@ export default function ComeradeScroll() {
 
         <div className="flex shrink-0 items-center">
           <h2 className="inline-block pr-[0.12em] whitespace-nowrap bg-gradient-to-r from-sky-400 via-blue-500 to-cyan-300 bg-clip-text text-[18vw] font-semibold leading-none tracking-[-0.08em] text-transparent sm:text-[13vw] md:text-[8vw] xl:text-[7vw]">
-            COMERADE CODERS
+            COMRADE CODERS
           </h2>
         </div>
 

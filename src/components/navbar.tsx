@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { ArrowUpRight, ChevronDown, Menu, Moon, Sun, X } from "lucide-react";
-import CClogo from "../assets/CClogo.png";
+import darkLogo from "../assets/logoCC.png";
+import lightLogo from "../assets/logoCC White.png";
 import { useTheme } from "../context/ThemeContext";
 
 const navItems = [{ label: "Home", section: "home" }];
@@ -21,14 +22,14 @@ const dropdownItems = [
   {
     label: "Industries",
     items: [
-      { label: "Manufacturing", href: "/services" },
-      { label: "E-Consultancy", href: "/services" },
-      { label: "Healthcare", href: "/services" },
-      { label: "Food Ordering", href: "/services" },
-      { label: "Social Networking", href: "/services" },
-      { label: "Logistics", href: "/services" },
-      { label: "Education", href: "/services" },
-      { label: "Accounting", href: "/services" },
+      { label: "Manufacturing", href: "/industries/manufacturing" },
+      { label: "E-Consultancy", href: "/industries/e-consultancy" },
+      { label: "Healthcare", href: "/industries/healthcare" },
+      { label: "Food Ordering", href: "/industries/food-ordering" },
+      { label: "Social Networking", href: "/industries/social-networking" },
+      { label: "Logistics", href: "/industries/logistics" },
+      { label: "Education", href: "/industries/education" },
+      { label: "Accounting", href: "/industries/accounting" },
 
 
     ],
@@ -92,16 +93,21 @@ function Navbar() {
         {/* LOGO */}
         <Link
           to="/"
-          aria-label="Comerade Coders – go to homepage"
-          className="ml-1 flex shrink-0 items-center"
+          aria-label="Comrade Coders – go to homepage"
+          className="ml-1 flex shrink-0 items-center gap-2.5"
         >
-          <img
-            src={CClogo}
-            alt="Comerade Coders logo"
-            width={120}
-            height={52}
-            className="h-[52px] w-auto object-contain drop-shadow-[0_0_14px_rgba(88,173,255,0.35)] transition-transform duration-300 hover:scale-105"
-          />
+          <span className="relative h-12 w-32 shrink-0 overflow-hidden sm:h-14 sm:w-36">
+            <img
+              src={isDark ? darkLogo : lightLogo}
+              alt="Comrade Coders logo"
+              width={512}
+              height={512}
+              className="absolute left-0 top-1/2 h-auto w-full max-w-none -translate-y-1/2 object-contain drop-shadow-[0_0_14px_rgba(88,173,255,0.35)] transition-transform duration-300 hover:scale-105"
+            />
+          </span>
+          <span className="hidden border-l border-black/[0.10] pl-3 text-[17px] font-semibold tracking-[-0.02em] text-black/70 dark:border-white/[0.12] dark:text-white/80 sm:inline">
+            <span className="text-[#2f8fe6] dark:text-[#78bdff]">AI</span>
+          </span>
         </Link>
 
         {/* ── DESKTOP CENTER PILL ── */}
@@ -230,7 +236,7 @@ function Navbar() {
           <button
             type="button"
             aria-label="Navigate to About Us"
-            onClick={() => scrollToSection("about")}
+            onClick={() => navigate("/about")}
             className={pillItem}
           >
             About Us
@@ -254,7 +260,7 @@ function Navbar() {
 
           <Link
             to="/contact"
-            aria-label="Contact Comerade Coders – Let's Talk"
+            aria-label="Contact Comrade Coders – Let's Talk"
             className="group ml-1 flex h-[42px] items-center gap-1.5 rounded-full bg-gradient-to-r from-[#58adff] to-[#2f8fe6] px-5 text-[13.5px] font-semibold text-white shadow-[0_6px_22px_rgba(47,143,230,0.28)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_28px_rgba(47,143,230,0.42)]"
           >
             Let's Talk
@@ -376,7 +382,7 @@ function Navbar() {
           <button
             type="button"
             aria-label="Navigate to About Us"
-            onClick={() => { scrollToSection("about"); setMobileOpen(false); }}
+            onClick={() => { navigate("/about"); setMobileOpen(false); }}
             className="mb-1 flex w-full rounded-2xl border border-transparent px-4 py-3 text-sm font-medium transition-all duration-200 text-black/70 hover:border-black/[0.10] hover:bg-black/[0.05] hover:text-black dark:text-white/70 dark:hover:border-white/[0.12] dark:hover:bg-white/[0.05] dark:hover:text-white"
           >
             About Us
@@ -384,7 +390,7 @@ function Navbar() {
 
           <Link
             to="/contact"
-            aria-label="Contact Comerade Coders – Let's Talk"
+            aria-label="Contact Comrade Coders – Let's Talk"
             onClick={() => setMobileOpen(false)}
             className="mt-3 flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#58adff] to-[#2f8fe6] px-5 py-3 text-sm font-semibold text-white"
           >

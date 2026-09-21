@@ -56,7 +56,7 @@ function WhyComerade() {
           <h2 className="font-['Montserrat'] text-[clamp(1.9rem,4vw,3.2rem)] font-bold leading-[1.1] tracking-[-0.03em] text-[#05070b] dark:text-white">
             Why{" "}
             <span className="bg-gradient-to-r from-[#2f8fe6] to-[#58adff] bg-clip-text text-transparent">
-              Comerade Coders
+              Comrade Coders
             </span>
           </h2>
           <p className="mx-auto mt-4 max-w-[500px] text-[15px] leading-7 text-black/50 dark:text-white/50">
