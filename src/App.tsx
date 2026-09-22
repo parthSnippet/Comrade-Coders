@@ -5,8 +5,8 @@ import Navbar from "./components/navbar";
 import Hero from "./components/hero";
 import WhatWeDo from "./components/WhatWeDo";
 import WhyComerade from "./components/WhyComerade";
-import ClientTestimonials from "./components/ClientTestimonials";
 import FAQ from "./components/FAQ";
+import BlogSection from "./components/BlogSection";
 import Footer from "./components/Footer";
 import AllServices from "./pages/AllServices";
 import ServiceDetail from "./pages/ServiceDetail";
@@ -15,6 +15,7 @@ import AboutPage from "./pages/AboutPage";
 import AllIndustries from "./pages/AllIndustries";
 import IndustryDetail from "./pages/IndustryDetail";
 import AdminPage from "./pages/AdminPage";
+import PortfolioPage from "./pages/PortfolioPage";
 import ComeradeScroll from "./components/ComeradeScroll";
 
 function HomePage() {
@@ -27,7 +28,7 @@ function HomePage() {
         <ComeradeScroll />
         <WhatWeDo />
         <WhyComerade />
-        <ClientTestimonials />
+        <BlogSection />
         <FAQ />
       </main>
       <Footer />
@@ -47,6 +48,7 @@ function App() {
         <Route path="/industries/:slug" element={<IndustryDetail />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/about" element={<AboutPage />} />
+        <Route path="/portfolio" element={<PortfolioPage />} />
         <Route path="/admin" element={<AdminPage />} />
       </Routes>
     </BrowserRouter>
