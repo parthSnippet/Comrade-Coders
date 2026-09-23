@@ -1,7 +1,30 @@
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
-import { services } from "../data/services";
 import { useScrollReveal } from "../hooks/useScrollReveal";
+
+const values = [
+  {
+    id: "01",
+    title: "Full-Stack Under One Roof",
+    description:
+      "Design, development, AI, automation and IT — all handled by one team. No handoffs, no gaps, no blame game.",
+    icon: "layers",
+  },
+  {
+    id: "02",
+    title: "Fast Turnaround",
+    description:
+      "We move fast without cutting corners. Most projects go from brief to live in weeks, not months.",
+    icon: "clock",
+  },
+  {
+    id: "03",
+    title: "Built for Scale",
+    description:
+      "Every system we build is architected to grow with your business — from 10 users to 10,000.",
+    icon: "code",
+  },
+];
 
 function WhatWeDo() {
   const headerRef = useScrollReveal<HTMLDivElement>();
@@ -42,24 +65,31 @@ function WhatWeDo() {
 
         {/* Cards */}
         <div ref={gridRef} className="reveal-stagger mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {services.map((s) => {
-            const Icon = s.icon;
+          {values.map((item) => {
+            const iconLabel =
+              item.icon === "layers" ? "▣" : item.icon === "clock" ? "◔" : "</>";
+
             return (
-              <Link
-                key={s.slug}
-                to={`/services/${s.slug}`}
-                className="group flex flex-col rounded-2xl border border-black/[0.07] bg-black/[0.02] p-6 transition-all duration-200 hover:border-black/[0.14] hover:bg-black/[0.04] dark:border-white/[0.07] dark:bg-white/[0.03] dark:hover:border-white/[0.13] dark:hover:bg-white/[0.055]"
+              <div
+                key={item.id}
+                className="group flex flex-col rounded-[1.5rem] border border-black/[0.08] bg-[#f7f9fb] p-6 shadow-[0_10px_35px_rgba(15,23,42,0.04)] transition-all duration-200 hover:border-black/[0.12] hover:bg-white dark:border-white/[0.08] dark:bg-white/[0.03] dark:shadow-[0_10px_35px_rgba(0,0,0,0.18)] dark:hover:border-white/[0.14] dark:hover:bg-white/[0.05]"
               >
-                <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-xl border border-[#58adff]/20 bg-[#58adff]/10">
-                  <Icon size={20} strokeWidth={1.6} className="text-[#2f8fe6] dark:text-[#58adff]" />
+                <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl border border-[#58adff]/15 bg-[#dfeeff] text-2xl font-semibold text-[#2f8fe6] dark:bg-[#0d1d2d] dark:text-[#58adff]">
+                  {iconLabel}
                 </div>
-                <h3 className="mb-2.5 text-[16px] font-semibold text-[#05070b] dark:text-white">{s.title}</h3>
-                <p className="flex-1 text-[14px] leading-6 text-black/50 dark:text-white/50">{s.desc.slice(0, 110)}…</p>
-                <div className="mt-5 flex items-center gap-1.5 text-[13px] font-semibold text-[#2f8fe6] dark:text-[#58adff]">
-                  Learn more
-                  <ArrowRight size={14} className="transition-transform duration-200 group-hover:translate-x-1" />
+
+                <div className="mb-4 text-[clamp(2.2rem,4vw,3.2rem)] font-semibold leading-none tracking-[-0.08em] text-[#2f8fe6]/80 dark:text-[#58adff]/90">
+                  {item.id}
                 </div>
-              </Link>
+
+                <h3 className="mb-3 text-[1.05rem] font-semibold text-[#05070b] dark:text-white">
+                  {item.title}
+                </h3>
+
+                <p className="flex-1 text-[15px] leading-7 text-black/55 dark:text-white/55">
+                  {item.description}
+                </p>
+              </div>
             );
           })}
         </div>

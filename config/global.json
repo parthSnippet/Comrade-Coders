@@ -1,0 +1,19 @@
+{
+  "api": {
+    "baseUrl": "http://192.168.1.8:8000/api/v1",
+    "endpoints": {
+      "services": "/services/",
+      "industries": "/industries/",
+      "technologies": "/technologies/",
+      "projects": "/projects/",
+      "blogCategories": "/blog/categories/",
+      "blogPosts": "/blog/posts/",
+      "contact": "/contact/",
+      "about": "/about/",
+      "siteSettings": "/settings/",
+      "socialLinks": "/social-links/",
+      "footerMenus": "/footer-menus/",
+      "comradeAI": "/comrade-ai/"
+    }
+  }
+}
