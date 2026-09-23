@@ -4,6 +4,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 
 import Navbar from "../components/navbar";
 import Footer from "../components/Footer";
+import SEOHead from "../components/SEOHead";
 
 import useAPI from "../../hook/useAPI";
 import apiConfig from "../../config/global.json";
@@ -71,6 +72,11 @@ export default function IndustryDetail() {
 
   return (
     <div className="min-h-screen bg-white text-[#05070b] dark:bg-[#05070b] dark:text-white">
+      <SEOHead
+        title={displayIndustry.title}
+        description={displayIndustry.short_description || displayIndustry.description}
+        canonical={`/industries/${displayIndustry.slug}`}
+      />
       <Navbar />
 
       <main className="page-transition">

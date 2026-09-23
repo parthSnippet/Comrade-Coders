@@ -1,8 +1,7 @@
 import { useCallback, useState } from "react";
-import axios from "axios";
 import type { AxiosError, AxiosRequestConfig, Method } from "axios";
 
-import apiConfig from "../config/global.json";
+import axiosInstance from "./axiosInstance";
 
 interface ApiErrorResponse {
   detail?: string;
@@ -38,8 +37,7 @@ const useAPI = <T = unknown>(): UseAPIReturn<T> => {
       setError(null);
 
       try {
-        const response = await axios({
-          baseURL: apiConfig.api.baseUrl,
+        const response = await axiosInstance({
           url: endpoint,
           method,
           data: body,

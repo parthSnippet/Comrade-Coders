@@ -4,6 +4,7 @@ import { ArrowRight, ArrowUpRight } from "lucide-react";
 
 import Navbar from "../components/navbar";
 import Footer from "../components/Footer";
+import SEOHead from "../components/SEOHead";
 
 import useAPI from "../../hook/useAPI";
 import apiConfig from "../../config/global.json";
@@ -32,6 +33,11 @@ export default function AllServices() {
 
   return (
     <div className="min-h-screen bg-white text-[#05070b] dark:bg-[#05070b] dark:text-white">
+      <SEOHead
+        title="Our Services"
+        description="Full-stack software capabilities under one team — web development, AI platforms, ERP, CRM, automation, and IT solutions by Comrade Coders."
+        canonical="/services"
+      />
       <Navbar />
 
       {/* Hero */}

@@ -1,9 +1,15 @@
 import { useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, ArrowUpRight, CheckCircle2, ChevronRight } from "lucide-react";
+import {
+  ArrowLeft,
+  CheckCircle2,
+  ChevronRight,
+  Play,
+} from "lucide-react";
 
 import Navbar from "../components/navbar";
 import Footer from "../components/Footer";
+import SEOHead from "../components/SEOHead";
 
 import useAPI from "../../hook/useAPI";
 import apiConfig from "../../config/global.json";
@@ -12,15 +18,46 @@ import { getServiceIcon } from "../utils/serviceIcons";
 import type { Service } from "../types/service";
 import { fallbackServices, getFallbackService } from "../data/fallback";
 
+interface ServiceVideo {
+  id: number;
+  service: number;
+  video_type: "mp4" | "youtube";
+  video_file: string | null;
+  youtube_url: string | null;
+  thumbnail: string | null;
+  is_active: boolean;
+  sort_order: number;
+  created_at: string;
+  updated_at: string;
+}
+
+interface ServiceWithVideos extends Service {
+  videos?: ServiceVideo[];
+}
+
 export default function ServiceDetail() {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
 
-  const { data: service, loading, error, request } = useAPI<Service>();
-  const { data: allServices, error: allError, request: requestAllServices } = useAPI<Service[]>();
+  const {
+    data: service,
+    loading,
+    error,
+    request,
+  } = useAPI<ServiceWithVideos>();
+
+  const {
+    data: allServices,
+    error: allError,
+    request: requestAllServices,
+  } = useAPI<Service[]>();
 
   useEffect(() => {
-    if (!slug) { navigate("/services", { replace: true }); return; }
+    if (!slug) {
+      navigate("/services", { replace: true });
+      return;
+    }
+
     request(`${apiConfig.api.endpoints.services}${slug}/`);
   }, [slug, request, navigate]);
 
@@ -32,9 +69,9 @@ export default function ServiceDetail() {
     window.scrollTo(0, 0);
   }, [slug]);
 
-  // fallback if API fails
-  const displayService: Service | null =
-    service ?? (error ? (getFallbackService(slug ?? "") ?? null) : null);
+  const displayService: ServiceWithVideos | null =
+    service ??
+    (error ? (getFallbackService(slug ?? "") ?? null) : null);
 
   const displayOthers: Service[] =
     (allServices ?? (allError ? fallbackServices : []))
@@ -45,12 +82,17 @@ export default function ServiceDetail() {
     return (
       <div className="min-h-screen bg-white text-[#05070b] dark:bg-[#05070b] dark:text-white">
         <Navbar />
+
         <main className="flex min-h-screen items-center justify-center px-5 pt-32">
           <div className="flex flex-col items-center gap-4 text-center">
             <div className="h-10 w-10 animate-spin rounded-full border-2 border-black/10 border-t-[#2f8fe6] dark:border-white/10 dark:border-t-[#58adff]" />
-            <p className="text-sm text-black/50 dark:text-white/50">Loading service...</p>
+
+            <p className="text-sm text-black/50 dark:text-white/50">
+              Loading service...
+            </p>
           </div>
         </main>
+
         <Footer />
       </div>
     );
@@ -60,16 +102,31 @@ export default function ServiceDetail() {
     return (
       <div className="min-h-screen bg-white text-[#05070b] dark:bg-[#05070b] dark:text-white">
         <Navbar />
+
         <main className="flex min-h-screen items-center justify-center px-5 pt-32">
           <div className="max-w-md text-center">
-            <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#2f8fe6] dark:text-[#58adff]">Service not found</p>
-            <h1 className="font-['Montserrat'] text-3xl font-bold">We couldn't find this service.</h1>
-            <p className="mt-3 text-sm leading-6 text-black/50 dark:text-white/50">The service may have been removed or the URL may be incorrect.</p>
-            <Link to="/services" className="mt-7 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#58adff] to-[#2f8fe6] px-5 py-2.5 text-sm font-semibold text-white shadow-[0_6px_20px_rgba(47,143,230,0.25)] transition-all duration-200 hover:-translate-y-0.5">
-              <ArrowLeft size={15} /> Back to Services
+            <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#2f8fe6] dark:text-[#58adff]">
+              Service not found
+            </p>
+
+            <h1 className="font-['Montserrat'] text-3xl font-bold">
+              We couldn't find this service.
+            </h1>
+
+            <p className="mt-3 text-sm leading-6 text-black/50 dark:text-white/50">
+              The service may have been removed or the URL may be incorrect.
+            </p>
+
+            <Link
+              to="/services"
+              className="mt-7 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#58adff] to-[#2f8fe6] px-5 py-2.5 text-sm font-semibold text-white shadow-[0_6px_20px_rgba(47,143,230,0.25)] transition-all duration-200 hover:-translate-y-0.5"
+            >
+              <ArrowLeft size={15} />
+              Back to Services
             </Link>
           </div>
         </main>
+
         <Footer />
       </div>
     );
@@ -77,44 +134,217 @@ export default function ServiceDetail() {
 
   const Icon = getServiceIcon(displayService.icon);
 
+  const activeVideo = [...(displayService.videos ?? [])]
+    .filter((video) => video.is_active)
+    .sort((a, b) => a.sort_order - b.sort_order)[0];
+
+  const getYouTubeEmbedUrl = (url: string) => {
+    try {
+      const parsedUrl = new URL(url);
+
+      let videoId = "";
+
+      if (parsedUrl.hostname.includes("youtu.be")) {
+        videoId = parsedUrl.pathname.replace("/", "").split("/")[0];
+      } else if (parsedUrl.hostname.includes("youtube.com")) {
+        if (parsedUrl.pathname.startsWith("/shorts/")) {
+          videoId = parsedUrl.pathname
+            .replace("/shorts/", "")
+            .split("/")[0];
+        } else if (parsedUrl.pathname.startsWith("/embed/")) {
+          videoId = parsedUrl.pathname
+            .replace("/embed/", "")
+            .split("/")[0];
+        } else {
+          videoId = parsedUrl.searchParams.get("v") ?? "";
+        }
+      }
+
+      if (!videoId) {
+        return null;
+      }
+
+      return `https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1`;
+    } catch {
+      return null;
+    }
+  };
+
+  const getVideoFileUrl = (url: string) => {
+    if (url.startsWith("http://") || url.startsWith("https://")) {
+      return url;
+    }
+
+    const baseUrl = apiConfig.api.baseUrl.replace(/\/api\/v1\/?$/, "");
+
+    return `${baseUrl}${url.startsWith("/") ? url : `/${url}`}`;
+  };
+
+  const renderServiceVideo = () => {
+    if (!activeVideo) {
+      return null;
+    }
+
+    if (
+      activeVideo.video_type === "youtube" &&
+      activeVideo.youtube_url
+    ) {
+      const embedUrl = getYouTubeEmbedUrl(activeVideo.youtube_url);
+
+      if (!embedUrl) {
+        return null;
+      }
+
+      return (
+        <div className="relative h-full w-full overflow-hidden rounded-[22px] bg-black">
+          <iframe
+            src={embedUrl}
+            title={`${displayService.title} video`}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowFullScreen
+            className="absolute inset-0 h-full w-full"
+            loading="lazy"
+          />
+        </div>
+      );
+    }
+
+    if (
+      activeVideo.video_type === "mp4" &&
+      activeVideo.video_file
+    ) {
+      return (
+        <video
+          src={getVideoFileUrl(activeVideo.video_file)}
+          poster={
+            activeVideo.thumbnail
+              ? getVideoFileUrl(activeVideo.thumbnail)
+              : undefined
+          }
+          controls
+          playsInline
+          preload="metadata"
+          className="h-full w-full rounded-[22px] object-cover"
+        />
+      );
+    }
+
+    return null;
+  };
+
+  const hasVideo = Boolean(
+    activeVideo &&
+      ((activeVideo.video_type === "youtube" &&
+        activeVideo.youtube_url) ||
+        (activeVideo.video_type === "mp4" &&
+          activeVideo.video_file))
+  );
+
   return (
     <div className="min-h-screen bg-white text-[#05070b] dark:bg-[#05070b] dark:text-white">
       <Navbar />
 
       <div key={displayService.id} className="page-transition">
+        <SEOHead
+          title={displayService.title}
+          description={displayService.short_description || displayService.description}
+          canonical={`/services/${displayService.slug}`}
+        />
         {/* Hero */}
         <section className="relative overflow-hidden pt-32 pb-20">
           <div className="pointer-events-none absolute inset-0">
             <div className="absolute left-[10%] top-[20%] h-[320px] w-[320px] rounded-full bg-[#328fe8]/6 blur-[80px] dark:bg-[#328fe8]/10" />
+
             <div className="absolute right-[8%] top-[30%] h-[280px] w-[280px] rounded-full bg-[#58adff]/5 blur-[70px] dark:bg-[#58adff]/8" />
           </div>
 
           <div className="relative mx-auto max-w-[1280px] px-5 sm:px-8 lg:px-10">
             <div className="mb-8 flex items-center gap-2 text-[13px] text-black/40 dark:text-white/40">
-              <Link to="/" className="transition-colors hover:text-black dark:hover:text-white">Home</Link>
+              <Link
+                to="/"
+                className="transition-colors hover:text-black dark:hover:text-white"
+              >
+                Home
+              </Link>
+
               <ChevronRight size={13} />
-              <Link to="/services" className="transition-colors hover:text-black dark:hover:text-white">Services</Link>
+
+              <Link
+                to="/services"
+                className="transition-colors hover:text-black dark:hover:text-white"
+              >
+                Services
+              </Link>
+
               <ChevronRight size={13} />
-              <span className="text-black/70 dark:text-white/70">{displayService.title}</span>
+
+              <span className="text-black/70 dark:text-white/70">
+                {displayService.title}
+              </span>
             </div>
 
-            <div className="grid gap-12 lg:grid-cols-[1fr_auto] lg:items-start">
+            <div
+              className={`grid gap-12 ${
+                hasVideo
+                  ? "lg:grid-cols-[minmax(0,1fr)_260px] lg:items-start"
+                  : "lg:grid-cols-1"
+              }`}
+            >
+              {/* Service Content */}
               <div>
                 <div className="mb-6 flex items-center gap-3">
                   <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-[#58adff]/20 bg-[#58adff]/10">
-                    <Icon size={22} strokeWidth={1.6} className="text-[#2f8fe6] dark:text-[#58adff]" />
+                    <Icon
+                      size={22}
+                      strokeWidth={1.6}
+                      className="text-[#2f8fe6] dark:text-[#58adff]"
+                    />
                   </div>
-                  <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-black/40 dark:text-white/40">Service</span>
+
+                  <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-black/40 dark:text-white/40">
+                    Service
+                  </span>
                 </div>
 
-                <h1 className="font-['Montserrat'] text-[clamp(2.2rem,5vw,4rem)] font-bold leading-[1.05] tracking-[-0.035em]">{displayService.title}</h1>
+                <h1 className="font-['Montserrat'] text-[clamp(2.2rem,5vw,4rem)] font-bold leading-[1.05] tracking-[-0.035em]">
+                  {displayService.title}
+                </h1>
 
                 {displayService.tagline && (
-                  <p className="mt-3 text-[1.1rem] font-medium text-[#2f8fe6] dark:text-[#58adff]">{displayService.tagline}</p>
+                  <p className="mt-3 text-[1.1rem] font-medium text-[#2f8fe6] dark:text-[#58adff]">
+                    {displayService.tagline}
+                  </p>
                 )}
 
-                <p className="mt-5 max-w-[620px] text-[15px] leading-7 text-black/55 dark:text-white/55">{displayService.description}</p>
+                <p className="mt-5 max-w-[620px] text-[15px] leading-7 text-black/55 dark:text-white/55">
+                  {displayService.description}
+                </p>
               </div>
+
+              {/* Service Video */}
+              {hasVideo && (
+                <div className="mx-auto w-full max-w-[260px] lg:mx-0 lg:ml-auto">
+                  <div className="mb-3 flex items-center gap-2">
+                    <div className="flex h-7 w-7 items-center justify-center rounded-full border border-[#58adff]/20 bg-[#58adff]/10">
+                      <Play
+                        size={12}
+                        fill="currentColor"
+                        className="ml-0.5 text-[#2f8fe6] dark:text-[#58adff]"
+                      />
+                    </div>
+
+                    <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-black/40 dark:text-white/40">
+                      See it in action
+                    </span>
+                  </div>
+
+                  <div className="relative aspect-[9/16] overflow-hidden rounded-[22px] border border-black/[0.08] bg-black shadow-[0_25px_70px_rgba(0,0,0,0.18)] dark:border-white/[0.08] dark:shadow-[0_25px_70px_rgba(0,0,0,0.35)]">
+                    {renderServiceVideo()}
+
+                    <div className="pointer-events-none absolute inset-0 rounded-[22px] ring-1 ring-inset ring-white/[0.08]" />
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </section>
@@ -124,59 +354,115 @@ export default function ServiceDetail() {
           <div className="mx-auto max-w-[1280px] px-5 sm:px-8 lg:px-10">
             <div className="grid gap-8 lg:grid-cols-[1fr_1fr]">
               <div className="rounded-2xl border border-black/[0.07] bg-black/[0.02] p-7 dark:border-white/[0.07] dark:bg-white/[0.03]">
-                <h2 className="mb-5 font-['Montserrat'] text-[17px] font-bold text-[#05070b] dark:text-white">What's included</h2>
+                <h2 className="mb-5 font-['Montserrat'] text-[17px] font-bold text-[#05070b] dark:text-white">
+                  What's included
+                </h2>
+
                 <ul className="flex flex-col gap-3">
                   {displayService.highlights?.map((h) => (
                     <li key={h} className="flex items-start gap-3">
-                      <CheckCircle2 size={16} strokeWidth={2} className="mt-0.5 shrink-0 text-[#2f8fe6] dark:text-[#58adff]" />
-                      <span className="text-[14px] leading-6 text-black/65 dark:text-white/65">{h}</span>
+                      <CheckCircle2
+                        size={16}
+                        strokeWidth={2}
+                        className="mt-0.5 shrink-0 text-[#2f8fe6] dark:text-[#58adff]"
+                      />
+
+                      <span className="text-[14px] leading-6 text-black/65 dark:text-white/65">
+                        {h}
+                      </span>
                     </li>
                   ))}
                 </ul>
               </div>
 
               <div className="rounded-2xl border border-black/[0.07] bg-black/[0.02] p-7 dark:border-white/[0.07] dark:bg-white/[0.03]">
-                <h2 className="mb-5 font-['Montserrat'] text-[17px] font-bold text-[#05070b] dark:text-white">What you get</h2>
+                <h2 className="mb-5 font-['Montserrat'] text-[17px] font-bold text-[#05070b] dark:text-white">
+                  What you get
+                </h2>
+
                 <ul className="flex flex-col gap-3">
                   {displayService.deliverables?.map((d) => (
                     <li key={d} className="flex items-start gap-3">
                       <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#2f8fe6] dark:bg-[#58adff]" />
-                      <span className="text-[14px] leading-6 text-black/65 dark:text-white/65">{d}</span>
+
+                      <span className="text-[14px] leading-6 text-black/65 dark:text-white/65">
+                        {d}
+                      </span>
                     </li>
                   ))}
                 </ul>
               </div>
             </div>
 
+            {/* Common Use Cases */}
             <div className="mt-8">
-              <h2 className="mb-6 font-['Montserrat'] text-[20px] font-bold text-[#05070b] dark:text-white">Common use cases</h2>
+              <h2 className="mb-6 font-['Montserrat'] text-[20px] font-bold text-[#05070b] dark:text-white">
+                Common use cases
+              </h2>
+
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 {displayService.use_cases?.map((u, i) => (
-                  <div key={u.title} className="rounded-2xl border border-black/[0.07] bg-black/[0.02] p-5 dark:border-white/[0.07] dark:bg-white/[0.03]">
-                    <span className="mb-3 block font-['Montserrat'] text-[1.6rem] font-bold leading-none text-black/[0.06] dark:text-white/[0.06]">{String(i + 1).padStart(2, "0")}</span>
-                    <h3 className="mb-2 text-[14px] font-semibold text-[#05070b] dark:text-white">{u.title}</h3>
-                    <p className="text-[13px] leading-5 text-black/50 dark:text-white/50">{u.desc}</p>
+                  <div
+                    key={u.title}
+                    className="rounded-2xl border border-black/[0.07] bg-black/[0.02] p-5 dark:border-white/[0.07] dark:bg-white/[0.03]"
+                  >
+                    <span className="mb-3 block font-['Montserrat'] text-[1.6rem] font-bold leading-none text-black/[0.06] dark:text-white/[0.06]">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+
+                    <h3 className="mb-2 text-[14px] font-semibold text-[#05070b] dark:text-white">
+                      {u.title}
+                    </h3>
+
+                    <p className="text-[13px] leading-5 text-black/50 dark:text-white/50">
+                      {u.desc}
+                    </p>
                   </div>
                 ))}
               </div>
             </div>
 
+            {/* Other Services */}
             <div className="mt-16 border-t border-black/[0.07] pt-12 dark:border-white/[0.07]">
               <div className="mb-6 flex items-center justify-between">
-                <h2 className="font-['Montserrat'] text-[18px] font-bold text-[#05070b] dark:text-white">Other services</h2>
-                <Link to="/services" className="text-[13px] font-medium text-[#2f8fe6] transition-colors hover:text-[#58adff] dark:text-[#58adff]">View all →</Link>
+                <h2 className="font-['Montserrat'] text-[18px] font-bold text-[#05070b] dark:text-white">
+                  Other services
+                </h2>
+
+                <Link
+                  to="/services"
+                  className="text-[13px] font-medium text-[#2f8fe6] transition-colors hover:text-[#58adff] dark:text-[#58adff]"
+                >
+                  View all →
+                </Link>
               </div>
+
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {displayOthers.map((s) => {
                   const OtherIcon = getServiceIcon(s.icon);
+
                   return (
-                    <Link key={s.slug} to={`/services/${s.slug}`} className="group flex items-center gap-4 rounded-2xl border border-black/[0.07] bg-black/[0.02] p-5 transition-all duration-200 hover:border-black/[0.13] dark:border-white/[0.07] dark:bg-white/[0.03] dark:hover:border-white/[0.13]">
+                    <Link
+                      key={s.slug}
+                      to={`/services/${s.slug}`}
+                      className="group flex items-center gap-4 rounded-2xl border border-black/[0.07] bg-black/[0.02] p-5 transition-all duration-200 hover:border-black/[0.13] dark:border-white/[0.07] dark:bg-white/[0.03] dark:hover:border-white/[0.13]"
+                    >
                       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[#58adff]/20 bg-[#58adff]/10">
-                        <OtherIcon size={18} strokeWidth={1.6} className="text-[#2f8fe6] dark:text-[#58adff]" />
+                        <OtherIcon
+                          size={18}
+                          strokeWidth={1.6}
+                          className="text-[#2f8fe6] dark:text-[#58adff]"
+                        />
                       </div>
+
                       <div>
-                        <p className="text-[14px] font-semibold text-[#05070b] dark:text-white">{s.title}</p>
-                        <p className="text-[12px] text-black/45 dark:text-white/45">{s.tagline || s.short_description}</p>
+                        <p className="text-[14px] font-semibold text-[#05070b] dark:text-white">
+                          {s.title}
+                        </p>
+
+                        <p className="text-[12px] text-black/45 dark:text-white/45">
+                          {s.tagline || s.short_description}
+                        </p>
                       </div>
                     </Link>
                   );
@@ -185,8 +471,12 @@ export default function ServiceDetail() {
             </div>
 
             <div className="mt-10">
-              <Link to="/services" className="inline-flex items-center gap-2 text-[13px] font-medium text-black/50 transition-colors hover:text-black dark:text-white/50 dark:hover:text-white">
-                <ArrowLeft size={14} /> Back to all services
+              <Link
+                to="/services"
+                className="inline-flex items-center gap-2 text-[13px] font-medium text-black/50 transition-colors hover:text-black dark:text-white/50 dark:hover:text-white"
+              >
+                <ArrowLeft size={14} />
+                Back to all services
               </Link>
             </div>
           </div>

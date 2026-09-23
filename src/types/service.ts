@@ -15,6 +15,7 @@ export interface Service {
   use_cases: ServiceUseCase[];
   image: string | null;
   icon: string | null;
+  youtube_url: string | null;
   is_active: boolean;
   created_at: string;
   updated_at: string;

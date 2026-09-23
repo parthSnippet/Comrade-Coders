@@ -3,6 +3,7 @@ import { ArrowUpRight, ImagePlus } from "lucide-react";
 
 import Navbar from "../components/navbar";
 import Footer from "../components/Footer";
+import SEOHead from "../components/SEOHead";
 
 import useAPI from "../../hook/useAPI";
 import apiConfig from "../../config/global.json";
@@ -25,6 +26,11 @@ export default function PortfolioPage() {
 
   return (
     <div className="min-h-screen bg-white text-[#05070b] dark:bg-[#05070b] dark:text-white">
+      <SEOHead
+        title="Portfolio"
+        description="Explore projects built by Comrade Coders — digital products, platforms, and custom software systems crafted for ambitious businesses."
+        canonical="/portfolio"
+      />
       <Navbar />
 
       <main className="pt-28">

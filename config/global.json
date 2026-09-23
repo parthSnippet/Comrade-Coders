@@ -3,6 +3,7 @@
     "baseUrl": "http://192.168.1.8:8000/api/v1",
     "endpoints": {
       "services": "/services/",
+      "serviceVideos": "/service-videos/",
       "industries": "/industries/",
       "technologies": "/technologies/",
       "projects": "/projects/",
@@ -13,7 +14,11 @@
       "siteSettings": "/settings/",
       "socialLinks": "/social-links/",
       "footerMenus": "/footer-menus/",
-      "comradeAI": "/comrade-ai/"
+      "comradeAI": "/comrade-ai/",
+
+      "authLogin": "/auth/login/",
+      "authRefresh": "/auth/refresh/",
+      "authMe": "/auth/me/"
     }
   }
 }

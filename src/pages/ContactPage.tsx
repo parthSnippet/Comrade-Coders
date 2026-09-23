@@ -12,6 +12,7 @@ import { Link } from "react-router-dom";
 
 import Navbar from "../components/navbar";
 import Footer from "../components/Footer";
+import SEOHead from "../components/SEOHead";
 
 import useAPI from "../../hook/useAPI";
 import apiConfig from "../../config/global.json";
@@ -219,6 +220,11 @@ export default function ContactPage() {
 
   return (
     <div className="min-h-screen bg-white text-[#05070b] dark:bg-[#05070b] dark:text-white">
+      <SEOHead
+        title="Contact Us"
+        description="Get in touch with Comrade Coders. Start your next software, AI, ERP, or web development project. Free consultation available."
+        canonical="/contact"
+      />
       <Navbar />
 
       <main className="relative overflow-hidden pt-32 pb-24">

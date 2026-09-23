@@ -9,6 +9,7 @@ export interface Project {
   client_name: string;
   project_url: string;
   featured_image: string | null;
+  gallery_images?: string[];
   services: string[];
   industries: string[];
   technologies: string[];
