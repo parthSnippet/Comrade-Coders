@@ -10,6 +10,7 @@ import apiConfig from "../../config/global.json";
 
 import { getServiceIcon } from "../utils/serviceIcons";
 import type { Service } from "../types/service";
+import { fallbackServices } from "../data/fallback";
 
 export default function AllServices() {
   const {
@@ -27,7 +28,7 @@ export default function AllServices() {
     request(apiConfig.api.endpoints.services);
   }, [request]);
 
-  const serviceList = services ?? [];
+  const serviceList = services ?? (error ? fallbackServices : []);
 
   return (
     <div className="min-h-screen bg-white text-[#05070b] dark:bg-[#05070b] dark:text-white">
@@ -92,12 +93,10 @@ export default function AllServices() {
             </div>
           )}
 
-          {/* Error */}
-          {error && (
-            <div className="py-20 text-center">
-              <p className="text-sm text-red-500">
-                {error}
-              </p>
+          {/* Error — fallback data show karo */}
+          {error && !loading && (
+            <div className="mb-6 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-[13px] text-amber-700 dark:border-amber-500/20 dark:bg-amber-500/10 dark:text-amber-400">
+              Live data unavailable — showing cached services.
             </div>
           )}
 
@@ -111,7 +110,7 @@ export default function AllServices() {
           )}
 
           {/* Service Grid */}
-          {!loading && !error && serviceList.length > 0 && (
+          {!loading && serviceList.length > 0 && (
             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {serviceList.map((service) => {
                 const Icon = getServiceIcon(service.icon);

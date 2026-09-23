@@ -10,6 +10,7 @@ import apiConfig from "../../config/global.json";
 
 import type { Industry } from "../types/industry";
 import { getIndustryIcon } from "../utils/industryIcons";
+import { fallbackIndustries } from "../data/fallback";
 
 export default function AllIndustries() {
   const {
@@ -76,14 +77,13 @@ export default function AllIndustries() {
             )}
 
             {!loading && error && (
-              <div className="col-span-full py-20 text-center text-sm text-red-500">
-                Failed to load industries. Please try again.
+              <div className="col-span-full mb-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-[13px] text-amber-700 dark:border-amber-500/20 dark:bg-amber-500/10 dark:text-amber-400">
+                Live data unavailable — showing cached industries.
               </div>
             )}
 
             {!loading &&
-              !error &&
-              industries?.map((industry) => {
+              (industries ?? (error ? fallbackIndustries : []))?.map((industry) => {
                 const Icon = getIndustryIcon(industry.icon);
 
                 return (
