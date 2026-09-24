@@ -59,7 +59,9 @@
 
 import ComradeAIWidget from "./components/ComradeAIWidget";
 import CookieConsent from "./components/CookieConsent";
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { useState } from "react";
+import { BrowserRouter, Navigate, Route, Routes, useLocation } from "react-router-dom";
+import { useEffect } from "react";
 
 import Navbar from "./components/navbar";
 import Hero from "./components/hero";
@@ -79,6 +81,7 @@ import IndustryDetail from "./pages/IndustryDetail";
 import AdminPage from "./pages/AdminPage";
 import PortfolioPage from "./pages/PortfolioPage";
 import ComeradeScroll from "./components/ComeradeScroll";
+import Technologies from "./components/Technologies";
 
 import AdminLayout from "./admin/AdminLayout";
 import DashboardPage from "./admin/AdminDashboard";
@@ -88,6 +91,10 @@ import AdminIndustriesPage from "./admin/industries/AdminIndustriesPage";
 import AdminInquiriesPage from "./admin/inquiries/AdminInquiriesPage";
 import AdminAboutPage from "./admin/about/AdminAboutPage";
 import AdminFooterPage from "./admin/footer/AdminFooterPage";
+import AdminTechnologiesPage from "./admin/technologies/AdminTechnologiesPage";
+import AdminBlogPage from "./admin/blog/AdminBlogPage";
+import BlogPostDetail from "./pages/BlogPostDetail";
+import PageLoader from "./components/PageLoader";
 
 function HomePage() {
   return (
@@ -102,6 +109,7 @@ function HomePage() {
 
       <main>
         <Hero />
+        <Technologies />
         <ComeradeScroll />
         <WhatWeDo />
         <WhyComerade />
@@ -188,6 +196,16 @@ function AdminAbout() {
   );
 }
 
+function AdminTechnologies() {
+  return (
+    <ProtectedAdminRoute>
+      <AdminLayout>
+        <AdminTechnologiesPage />
+      </AdminLayout>
+    </ProtectedAdminRoute>
+  );
+}
+
 function AdminFooter() {
   return (
     <ProtectedAdminRoute>
@@ -198,9 +216,27 @@ function AdminFooter() {
   );
 }
 
+function AdminBlog() {
+  return (
+    <ProtectedAdminRoute>
+      <AdminLayout>
+        <AdminBlogPage />
+      </AdminLayout>
+    </ProtectedAdminRoute>
+  );
+}
+
 function App() {
+  const [loaded, setLoaded] = useState(() => {
+    const seen = sessionStorage.getItem("cc-loaded");
+    if (seen) return true;
+    sessionStorage.setItem("cc-loaded", "1");
+    return false;
+  });
+
   return (
     <BrowserRouter>
+      {!loaded && <PageLoader onDone={() => setLoaded(true)} />}
       <CookieConsent />
 
       <Routes>
@@ -216,6 +252,7 @@ function App() {
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/portfolio" element={<PortfolioPage />} />
+        <Route path="/blog/:slug" element={<BlogPostDetail />} />
 
         {/* Admin */}
         <Route path="/admin" element={<AdminPage />} />
@@ -226,7 +263,10 @@ function App() {
         <Route path="/admin/industries" element={<AdminIndustries />} />
         <Route path="/admin/inquiries" element={<AdminInquiries />} />
         <Route path="/admin/about" element={<AdminAbout />} />
+        <Route path="/admin/technologies" element={<AdminTechnologies />} />
         <Route path="/admin/footer" element={<AdminFooter />} />
+        <Route path="/admin/blog" element={<AdminBlog />} />
+        <Route path="/loader" element={<PageLoader onDone={() => {}} />} />
       </Routes>
     </BrowserRouter>
   );

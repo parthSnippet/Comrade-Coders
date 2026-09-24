@@ -133,7 +133,7 @@ function Navbar() {
         <Link
           to="/"
           aria-label="Comrade Coders – go to homepage"
-          className="ml-1 flex shrink-0 items-center gap-2.5"
+          className="ml-1 flex shrink-0 items-center gap-1.5"
         >
           <span className="relative h-12 w-32 shrink-0 overflow-hidden sm:h-14 sm:w-36">
             <img
@@ -145,11 +145,9 @@ function Navbar() {
             />
           </span>
 
-          <span className="hidden border-l border-black/[0.10] pl-3 text-[17px] font-semibold tracking-[-0.02em] text-black/70 dark:border-white/[0.12] dark:text-white/80 sm:inline">
-            <span className="text-[#2f8fe6] dark:text-[#78bdff]">
-              AI
+          <span className="hidden text-[17px] font-semibold tracking-[-0.02em] sm:inline">
+              <span className="text-[#2f8fe6] dark:text-[#78bdff]">AI</span>
             </span>
-          </span>
         </Link>
 
         {/* DESKTOP CENTER PILL */}

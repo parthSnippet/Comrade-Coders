@@ -333,8 +333,8 @@ export default function AdminFooterPage() {
                 <form onSubmit={handleSocialSave} className="space-y-3">
                   <div>
                     <label className="mb-1.5 block text-xs font-semibold text-black/60 dark:text-white/55">Platform</label>
-                    <select value={socialForm.platform} onChange={(e) => setSocialForm((p) => ({ ...p, platform: e.target.value }))} className={inputCls}>
-                      {PLATFORMS.map((pl) => <option key={pl} value={pl} className="capitalize">{pl}</option>)}
+                    <select value={socialForm.platform} onChange={(e) => setSocialForm((p) => ({ ...p, platform: e.target.value }))} className={`${inputCls} capitalize dark:[color-scheme:dark]`}>
+                      {PLATFORMS.map((pl) => <option key={pl} value={pl} className="capitalize bg-[#0d1219] text-white">{pl.charAt(0).toUpperCase() + pl.slice(1)}</option>)}
                     </select>
                   </div>
                   <div>

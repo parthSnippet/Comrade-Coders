@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
@@ -10,6 +10,7 @@ import {
 import Navbar from "../components/navbar";
 import Footer from "../components/Footer";
 import SEOHead from "../components/SEOHead";
+import InlineLoader from "../components/InlineLoader";
 
 import useAPI from "../../hook/useAPI";
 import apiConfig from "../../config/global.json";
@@ -69,6 +70,8 @@ export default function ServiceDetail() {
     window.scrollTo(0, 0);
   }, [slug]);
 
+  const [videoPlaying, setVideoPlaying] = useState(false);
+
   const displayService: ServiceWithVideos | null =
     service ??
     (error ? (getFallbackService(slug ?? "") ?? null) : null);
@@ -82,17 +85,7 @@ export default function ServiceDetail() {
     return (
       <div className="min-h-screen bg-white text-[#05070b] dark:bg-[#05070b] dark:text-white">
         <Navbar />
-
-        <main className="flex min-h-screen items-center justify-center px-5 pt-32">
-          <div className="flex flex-col items-center gap-4 text-center">
-            <div className="h-10 w-10 animate-spin rounded-full border-2 border-black/10 border-t-[#2f8fe6] dark:border-white/10 dark:border-t-[#58adff]" />
-
-            <p className="text-sm text-black/50 dark:text-white/50">
-              Loading service...
-            </p>
-          </div>
-        </main>
-
+        <InlineLoader />
         <Footer />
       </div>
     );
@@ -132,95 +125,71 @@ export default function ServiceDetail() {
     );
   }
 
-  const Icon = getServiceIcon(displayService.icon);
+  const Icon = getServiceIcon(displayService?.icon ?? "");
 
-  const activeVideo = [...(displayService.videos ?? [])]
+  const activeVideo = [...(displayService?.videos ?? [])]
     .filter((video) => video.is_active)
     .sort((a, b) => a.sort_order - b.sort_order)[0];
 
-  const getYouTubeEmbedUrl = (url: string) => {
+  const getYouTubeId = (url: string) => {
     try {
-      const parsedUrl = new URL(url);
-
-      let videoId = "";
-
-      if (parsedUrl.hostname.includes("youtu.be")) {
-        videoId = parsedUrl.pathname.replace("/", "").split("/")[0];
-      } else if (parsedUrl.hostname.includes("youtube.com")) {
-        if (parsedUrl.pathname.startsWith("/shorts/")) {
-          videoId = parsedUrl.pathname
-            .replace("/shorts/", "")
-            .split("/")[0];
-        } else if (parsedUrl.pathname.startsWith("/embed/")) {
-          videoId = parsedUrl.pathname
-            .replace("/embed/", "")
-            .split("/")[0];
-        } else {
-          videoId = parsedUrl.searchParams.get("v") ?? "";
-        }
-      }
-
-      if (!videoId) {
-        return null;
-      }
-
-      return `https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1`;
-    } catch {
-      return null;
-    }
+      const u = new URL(url);
+      if (u.hostname.includes("youtu.be")) return u.pathname.replace("/", "").split("/")[0];
+      if (u.pathname.startsWith("/shorts/")) return u.pathname.replace("/shorts/", "").split("/")[0];
+      if (u.pathname.startsWith("/embed/")) return u.pathname.replace("/embed/", "").split("/")[0];
+      return u.searchParams.get("v") ?? "";
+    } catch { return ""; }
   };
 
   const getVideoFileUrl = (url: string) => {
-    if (url.startsWith("http://") || url.startsWith("https://")) {
-      return url;
-    }
-
+    if (url.startsWith("http://") || url.startsWith("https://")) return url;
     const baseUrl = apiConfig.api.baseUrl.replace(/\/api\/v1\/?$/, "");
-
     return `${baseUrl}${url.startsWith("/") ? url : `/${url}`}`;
   };
 
   const renderServiceVideo = () => {
-    if (!activeVideo) {
-      return null;
-    }
+    if (!activeVideo) return null;
 
-    if (
-      activeVideo.video_type === "youtube" &&
-      activeVideo.youtube_url
-    ) {
-      const embedUrl = getYouTubeEmbedUrl(activeVideo.youtube_url);
+    if (activeVideo.video_type === "youtube" && activeVideo.youtube_url) {
+      const videoId = getYouTubeId(activeVideo.youtube_url);
+      if (!videoId) return null;
+      const embedUrl = `https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1&autoplay=1`;
+      const thumb = activeVideo.thumbnail
+        ? getVideoFileUrl(activeVideo.thumbnail)
+        : `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
 
-      if (!embedUrl) {
-        return null;
-      }
-
-      return (
-        <div className="relative h-full w-full overflow-hidden rounded-[22px] bg-black">
-          <iframe
-            src={embedUrl}
-            title={`${displayService.title} video`}
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            allowFullScreen
-            className="absolute inset-0 h-full w-full"
-            loading="lazy"
-          />
-        </div>
+      return videoPlaying ? (
+        <iframe
+          src={embedUrl}
+          title={`${displayService.title} video`}
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+          className="absolute inset-0 h-full w-full rounded-[22px]"
+        />
+      ) : (
+        <button
+          type="button"
+          onClick={() => setVideoPlaying(true)}
+          className="group absolute inset-0 w-full h-full"
+          aria-label="Play video"
+        >
+          <img src={thumb} alt="Video thumbnail" className="h-full w-full object-cover rounded-[22px]" />
+          <div className="absolute inset-0 rounded-[22px] bg-black/40 transition group-hover:bg-black/50" />
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
+            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white/95 shadow-[0_8px_30px_rgba(0,0,0,0.35)] transition-transform duration-200 group-hover:scale-110">
+              <Play size={22} fill="#2f8fe6" className="ml-1 text-[#2f8fe6]" />
+            </div>
+            <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-white/80">Watch Demo</span>
+          </div>
+        </button>
       );
     }
 
-    if (
-      activeVideo.video_type === "mp4" &&
-      activeVideo.video_file
-    ) {
+    if (activeVideo.video_type === "mp4" && activeVideo.video_file) {
       return (
         <video
           src={getVideoFileUrl(activeVideo.video_file)}
-          poster={
-            activeVideo.thumbnail
-              ? getVideoFileUrl(activeVideo.thumbnail)
-              : undefined
-          }
+          poster={activeVideo.thumbnail ? getVideoFileUrl(activeVideo.thumbnail) : undefined}
           controls
           playsInline
           preload="metadata"
@@ -286,7 +255,7 @@ export default function ServiceDetail() {
             <div
               className={`grid gap-12 ${
                 hasVideo
-                  ? "lg:grid-cols-[minmax(0,1fr)_260px] lg:items-start"
+                  ? "lg:grid-cols-[minmax(0,1fr)_220px] lg:items-start"
                   : "lg:grid-cols-1"
               }`}
             >
@@ -323,25 +292,26 @@ export default function ServiceDetail() {
 
               {/* Service Video */}
               {hasVideo && (
-                <div className="mx-auto w-full max-w-[260px] lg:mx-0 lg:ml-auto">
-                  <div className="mb-3 flex items-center gap-2">
-                    <div className="flex h-7 w-7 items-center justify-center rounded-full border border-[#58adff]/20 bg-[#58adff]/10">
-                      <Play
-                        size={12}
-                        fill="currentColor"
-                        className="ml-0.5 text-[#2f8fe6] dark:text-[#58adff]"
-                      />
+                <div className="mx-auto w-full max-w-[220px] lg:mx-0 lg:ml-auto">
+                  <div className="sticky top-28">
+                    <div className="mb-3 flex items-center gap-2">
+                      <div className="flex h-7 w-7 items-center justify-center rounded-full border border-[#58adff]/20 bg-[#58adff]/10">
+                        <Play
+                          size={12}
+                          fill="currentColor"
+                          className="ml-0.5 text-[#2f8fe6] dark:text-[#58adff]"
+                        />
+                      </div>
+
+                      <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-black/40 dark:text-white/40">
+                        See it in action
+                      </span>
                     </div>
 
-                    <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-black/40 dark:text-white/40">
-                      See it in action
-                    </span>
-                  </div>
-
-                  <div className="relative aspect-[9/16] overflow-hidden rounded-[22px] border border-black/[0.08] bg-black shadow-[0_25px_70px_rgba(0,0,0,0.18)] dark:border-white/[0.08] dark:shadow-[0_25px_70px_rgba(0,0,0,0.35)]">
-                    {renderServiceVideo()}
-
-                    <div className="pointer-events-none absolute inset-0 rounded-[22px] ring-1 ring-inset ring-white/[0.08]" />
+                    <div className="relative aspect-[9/16] overflow-hidden rounded-[22px] border border-black/[0.08] bg-black shadow-[0_25px_70px_rgba(0,0,0,0.18)] dark:border-white/[0.08] dark:shadow-[0_25px_70px_rgba(0,0,0,0.35)]">
+                      {renderServiceVideo()}
+                      <div className="pointer-events-none absolute inset-0 rounded-[22px] ring-1 ring-inset ring-white/[0.08]" />
+                    </div>
                   </div>
                 </div>
               )}
