@@ -122,6 +122,15 @@ function HomePage() {
   );
 }
 
+function isTokenExpired(token: string): boolean {
+  try {
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    return payload.exp * 1000 < Date.now();
+  } catch {
+    return true;
+  }
+}
+
 function ProtectedAdminRoute({
   children,
 }: {
@@ -129,7 +138,10 @@ function ProtectedAdminRoute({
 }) {
   const accessToken = sessionStorage.getItem("admin_access_token");
 
-  if (!accessToken) {
+  if (!accessToken || isTokenExpired(accessToken)) {
+    sessionStorage.removeItem("admin_access_token");
+    sessionStorage.removeItem("admin_refresh_token");
+    sessionStorage.removeItem("admin_user");
     return <Navigate to="/admin" replace />;
   }
 

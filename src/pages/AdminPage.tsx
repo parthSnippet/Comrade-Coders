@@ -1,4 +1,4 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import {
   ArrowRight,
   Eye,
@@ -26,6 +26,13 @@ interface LoginResponse {
 
 export default function AdminPage() {
   const navigate = useNavigate();
+
+  // Clear any stale tokens when landing on login page
+  useEffect(() => {
+    sessionStorage.removeItem("admin_access_token");
+    sessionStorage.removeItem("admin_refresh_token");
+    sessionStorage.removeItem("admin_user");
+  }, []);
 
   const { loading, error, request } = useAPI<LoginResponse>();
 

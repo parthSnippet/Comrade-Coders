@@ -3,6 +3,18 @@ import type { AxiosRequestConfig, InternalAxiosRequestConfig } from "axios";
 
 import apiConfig from "../config/global.json";
 
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || apiConfig.api.baseUrl;
+
+// ─── JWT expiry check ─────────────────────────────────────────────────────────
+function isTokenExpired(token: string): boolean {
+  try {
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    return payload.exp * 1000 < Date.now();
+  } catch {
+    return true;
+  }
+}
+
 // ─── Extend config to carry retry flag ───────────────────────────────────────
 interface RetryableRequestConfig extends InternalAxiosRequestConfig {
   _retry?: boolean;
@@ -39,15 +51,22 @@ function forceLogout() {
 
 // ─── Axios instance ───────────────────────────────────────────────────────────
 const axiosInstance = axios.create({
-  baseURL: apiConfig.api.baseUrl,
+  baseURL: BASE_URL,
   timeout: 15000,
 });
 
 // ─── Request interceptor — attach access token ────────────────────────────────
 axiosInstance.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
+    const isAuthEndpoint =
+      config.url?.includes(apiConfig.api.endpoints.authLogin) ||
+      config.url?.includes(apiConfig.api.endpoints.authRefresh);
     const token = sessionStorage.getItem("admin_access_token");
-    if (token && config.headers) {
+    if (token && config.headers && !isAuthEndpoint) {
+      if (isTokenExpired(token)) {
+        // Token expired — let response interceptor handle refresh via 401
+        // but still attach it so server returns 401 to trigger refresh flow
+      }
       config.headers["Authorization"] = `Bearer ${token}`;
     }
     return config;
@@ -105,20 +124,20 @@ axiosInstance.interceptors.response.use(
     isRefreshing = true;
 
     try {
-      const response = await axios.post(
-        `${apiConfig.api.baseUrl}${apiConfig.api.endpoints.authRefresh}`,
+      const refreshResponse = await axios.post(
+        `${BASE_URL}${apiConfig.api.endpoints.authRefresh}`,
         { refresh: refreshToken },
         { timeout: 10000 }
       );
 
-      const newAccessToken: string = response.data.access;
+      const newAccessToken: string = refreshResponse.data.access;
 
       // Persist new token
       sessionStorage.setItem("admin_access_token", newAccessToken);
 
       // Also update refresh token if backend rotates it
-      if (response.data.refresh) {
-        sessionStorage.setItem("admin_refresh_token", response.data.refresh);
+      if (refreshResponse.data.refresh) {
+        sessionStorage.setItem("admin_refresh_token", refreshResponse.data.refresh);
       }
 
       // Update default header for future requests

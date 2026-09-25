@@ -7,10 +7,9 @@ import {
   Workflow,
 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
-import darkHeroLogo from "../assets/logoCC.png";
-import lightHeroLogo from "../assets/logoCC White.png";
-import heroImgLight from "../assets/hero_img.png";
-import heroImgDark from "../assets/hero_img_dark.png";
+import heroVidDark from "../assets/Hero_vid_dark.mp4";
+import heroVidLight from "../assets/Hero_vid_white.mp4";
+import heroVid1 from "../assets/Hero_vid_white.mp4";
 import { useTheme } from "../context/ThemeContext";
 
 const floatingCards = [
@@ -251,7 +250,7 @@ function Hero() {
 
       {/* Grid */}
       <div
-        className="pointer-events-none absolute inset-0 opacity-[0.03] dark:opacity-[0.04]"
+        className="pointer-events-none absolute inset-0 opacity-0 dark:opacity-[0.04]"
         style={{
           backgroundImage:
             "linear-gradient(rgba(0,0,0,1) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,1) 1px, transparent 1px)",
@@ -324,11 +323,15 @@ function Hero() {
           <div className="relative mx-auto w-full max-w-[500px] animate-fadein-right">
             <div className="relative aspect-square">
 
-              {/* Center Image */}
+              {/* Center Video */}
               <div className="absolute left-1/2 top-1/2 z-20 h-[220px] w-[220px] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-full shadow-[0_0_60px_rgba(88,173,255,0.20)] sm:h-[260px] sm:w-[260px]">
-                <img
-                  src={isDark ? heroImgDark : heroImgLight}
-                  alt="Comrade Coders"
+                <video
+                  key={isDark ? "dark" : "light"}
+                  src={isDark ? heroVidDark : heroVidLight}
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
                   className="h-full w-full object-cover"
                 />
               </div>

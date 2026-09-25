@@ -42,19 +42,21 @@ const projectTypeValues: Record<string, string> = {
 const callNumber = "+918128564899";
 
 const budgetOptions = [
-  "Under $1k",
-  "$1k - $5k",
-  "$5k - $15k",
-  "$15k - $30k",
-  "$30k+",
+  "Under ₹50k",
+  "₹50k - ₹2L",
+  "₹2L - ₹5L",
+  "₹5L - ₹10L",
+  "₹10L+",
+  "Custom",
 ];
 
 const budgetValues: Record<string, string> = {
-  "Under $1k": "under_1k",
-  "$1k - $5k": "1k_5k",
-  "$5k - $15k": "5k_15k",
-  "$15k - $30k": "15k_30k",
-  "$30k+": "30k_plus",
+  "Under ₹50k": "under_50k",
+  "₹50k - ₹2L": "50k_2l",
+  "₹2L - ₹5L": "2l_5l",
+  "₹5L - ₹10L": "5l_10l",
+  "₹10L+": "10l_plus",
+  "Custom": "custom",
 };
 
 const initialForm = {
@@ -63,7 +65,7 @@ const initialForm = {
   company: "",
   phone: "",
   projectType: projectOptions[0],
-  budget: budgetOptions[1],
+  budget: budgetOptions[0],
   timeline: "",
   message: "",
 };
@@ -91,6 +93,7 @@ export default function ContactPage() {
   >({});
 
   const [submitted, setSubmitted] = useState(false);
+  const [customBudget, setCustomBudget] = useState("");
 
   const {
     loading,
@@ -156,6 +159,18 @@ export default function ContactPage() {
       nextErrors.email = "Please enter a valid email.";
     }
 
+    if (!formData.company.trim()) {
+      nextErrors.company = "Company name is required.";
+    }
+
+    if (formData.budget === "Custom" && !customBudget.trim()) {
+      nextErrors.budget = "Please enter your budget.";
+    }
+
+    if (!formData.timeline.trim()) {
+      nextErrors.timeline = "Timeline is required.";
+    }
+
     if (!formData.message.trim()) {
       nextErrors.message = "Tell us a bit about your project.";
     }
@@ -200,7 +215,7 @@ export default function ContactPage() {
       company: formData.company.trim(),
       phone: formData.phone.trim(),
       project_type: projectTypeValues[formData.projectType],
-      budget: budgetValues[formData.budget],
+      budget: formData.budget === "Custom" ? customBudget.trim() : budgetValues[formData.budget],
       timeline: formData.timeline.trim(),
       project_brief: formData.message.trim(),
     };
@@ -215,6 +230,7 @@ export default function ContactPage() {
       setSubmitted(true);
       setErrors({});
       setFormData(initialForm);
+      setCustomBudget("");
     }
   };
 
@@ -442,6 +458,12 @@ export default function ContactPage() {
                         placeholder="Company name"
                         className="w-full rounded-xl border border-black/[0.08] bg-black/[0.02] px-3.5 py-2.5 text-[13px] text-black placeholder:text-black/30 outline-none transition duration-200 focus:border-[#58adff]/50 focus:bg-white dark:border-white/[0.08] dark:bg-white/[0.02] dark:text-white dark:placeholder:text-white/25 dark:focus:bg-[#0f172a]"
                       />
+
+                      {errors.company && (
+                        <p className="mt-1.5 text-[11px] text-red-500">
+                          {errors.company}
+                        </p>
+                      )}
                     </div>
 
                     <div>
@@ -495,19 +517,43 @@ export default function ContactPage() {
                         Budget
                       </label>
 
-                      <select
-                        id="budget"
-                        name="budget"
-                        value={formData.budget}
-                        onChange={handleChange}
-                        className="w-full rounded-xl border border-black/[0.08] bg-black/[0.02] px-3.5 py-2.5 text-[13px] text-black outline-none transition duration-200 focus:border-[#58adff]/50 focus:bg-white dark:border-white/[0.08] dark:bg-white/[0.02] dark:text-white dark:focus:bg-[#0f172a]"
-                      >
-                        {budgetOptions.map((option) => (
-                          <option key={option} value={option}>
-                            {option}
-                          </option>
-                        ))}
-                      </select>
+                      {formData.budget === "Custom" ? (
+                        <input
+                          value={customBudget}
+                          onChange={(e) => {
+                            setCustomBudget(e.target.value);
+                            setErrors((prev) => ({ ...prev, budget: "" }));
+                          }}
+                          placeholder="Type your budget (e.g. ₹75,000)"
+                          autoFocus
+                          className="w-full rounded-xl border border-[#58adff]/50 bg-black/[0.02] px-3.5 py-2.5 text-[13px] text-black placeholder:text-black/30 outline-none transition duration-200 focus:bg-white dark:border-[#58adff]/40 dark:bg-white/[0.02] dark:text-white dark:placeholder:text-white/25 dark:focus:bg-[#0f172a]"
+                          onBlur={() => {
+                            if (!customBudget.trim()) {
+                              setFormData((prev) => ({ ...prev, budget: budgetOptions[0] }));
+                            }
+                          }}
+                        />
+                      ) : (
+                        <select
+                          id="budget"
+                          name="budget"
+                          value={formData.budget}
+                          onChange={handleChange}
+                          className="w-full rounded-xl border border-black/[0.08] bg-black/[0.02] px-3.5 py-2.5 text-[13px] text-black outline-none transition duration-200 focus:border-[#58adff]/50 focus:bg-white dark:border-white/[0.08] dark:bg-white/[0.02] dark:text-white dark:focus:bg-[#0f172a]"
+                        >
+                          {budgetOptions.map((option) => (
+                            <option key={option} value={option}>
+                              {option}
+                            </option>
+                          ))}
+                        </select>
+                      )}
+
+                      {errors.budget && (
+                        <p className="mt-1.5 text-[11px] text-red-500">
+                          {errors.budget}
+                        </p>
+                      )}
                     </div>
                   </div>
 
@@ -527,6 +573,12 @@ export default function ContactPage() {
                       placeholder="e.g. 4-6 weeks"
                       className="w-full rounded-xl border border-black/[0.08] bg-black/[0.02] px-3.5 py-2.5 text-[13px] text-black placeholder:text-black/30 outline-none transition duration-200 focus:border-[#58adff]/50 focus:bg-white dark:border-white/[0.08] dark:bg-white/[0.02] dark:text-white dark:placeholder:text-white/25 dark:focus:bg-[#0f172a]"
                     />
+
+                    {errors.timeline && (
+                      <p className="mt-1.5 text-[11px] text-red-500">
+                        {errors.timeline}
+                      </p>
+                    )}
                   </div>
 
                   <div>

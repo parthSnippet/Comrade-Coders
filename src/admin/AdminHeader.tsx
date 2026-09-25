@@ -3,6 +3,7 @@ import {
   Menu,
   Search,
 } from "lucide-react";
+import { useLocation } from "react-router-dom";
 
 interface AdminHeaderProps {
   onMenuClick?: () => void;
@@ -24,7 +25,7 @@ export default function AdminHeader({
     }
   }
 
-  const currentPath = window.location.pathname;
+  const { pathname: currentPath } = useLocation();
 
   const getPageTitle = () => {
     if (currentPath === "/admin" || currentPath === "/admin/dashboard") {
