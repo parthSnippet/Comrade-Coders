@@ -525,6 +525,7 @@ export default function AdminServicesPage() {
       {formOpen && (
         <AdminServiceForm
           service={editing}
+          allServices={data ?? []}
           onClose={() => {
             setFormOpen(false);
             setEditing(null);

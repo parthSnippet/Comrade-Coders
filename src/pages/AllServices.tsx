@@ -117,52 +117,72 @@ export default function AllServices() {
 
           {/* Service Grid */}
           {!loading && serviceList.length > 0 && (
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="space-y-10">
               {serviceList.map((service) => {
                 const Icon = getServiceIcon(service.icon);
 
                 return (
-                  <Link
-                    key={service.id}
-                    to={`/services/${service.slug}`}
-                    className="group flex flex-col rounded-2xl border border-black/[0.07] bg-black/[0.02] p-6 transition-all duration-200 hover:border-black/[0.14] hover:bg-black/[0.04] dark:border-white/[0.07] dark:bg-white/[0.03] dark:hover:border-white/[0.13] dark:hover:bg-white/[0.055]"
-                  >
-                    {/* Icon */}
-                    <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-xl border border-[#58adff]/20 bg-[#58adff]/10">
-                      <Icon
-                        size={20}
-                        strokeWidth={1.6}
-                        className="text-[#2f8fe6] dark:text-[#58adff]"
-                      />
-                    </div>
+                  <div key={service.id}>
+                    {/* Parent Service Card */}
+                    <Link
+                      to={`/services/${service.slug}`}
+                      className="group flex flex-col rounded-2xl border border-black/[0.07] bg-black/[0.02] p-6 transition-all duration-200 hover:border-black/[0.14] hover:bg-black/[0.04] dark:border-white/[0.07] dark:bg-white/[0.03] dark:hover:border-white/[0.13] dark:hover:bg-white/[0.055]"
+                    >
+                      <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-xl border border-[#58adff]/20 bg-[#58adff]/10">
+                        <Icon size={20} strokeWidth={1.6} className="text-[#2f8fe6] dark:text-[#58adff]" />
+                      </div>
 
-                    {/* Title */}
-                    <h2 className="mb-1.5 text-[16px] font-semibold text-[#05070b] dark:text-white">
-                      {service.title}
-                    </h2>
+                      <h2 className="mb-1.5 text-[16px] font-semibold text-[#05070b] dark:text-white">
+                        {service.title}
+                      </h2>
 
-                    {/* Tagline */}
-                    {service.tagline && (
-                      <p className="mb-3 text-[13px] font-medium text-[#2f8fe6] dark:text-[#58adff]">
-                        {service.tagline}
+                      {service.tagline && (
+                        <p className="mb-3 text-[13px] font-medium text-[#2f8fe6] dark:text-[#58adff]">
+                          {service.tagline}
+                        </p>
+                      )}
+
+                      <p className="flex-1 text-[14px] leading-6 text-black/50 dark:text-white/50">
+                        {service.short_description}
                       </p>
+
+                      <div className="mt-5 flex items-center gap-1.5 text-[13px] font-semibold text-[#2f8fe6] dark:text-[#58adff]">
+                        Learn more
+                        <ArrowRight size={14} className="transition-transform duration-200 group-hover:translate-x-1" />
+                      </div>
+                    </Link>
+
+                    {/* Sub-services */}
+                    {service.sub_services && service.sub_services.length > 0 && (
+                      <div className="mt-3 grid gap-3 pl-4 sm:grid-cols-2 lg:grid-cols-3">
+                        {service.sub_services.map((sub) => {
+                          const SubIcon = getServiceIcon(sub.icon);
+                          return (
+                            <Link
+                              key={sub.id}
+                              to={`/services/${sub.slug}`}
+                              className="group flex items-start gap-3 rounded-xl border border-black/[0.06] bg-black/[0.015] p-4 transition-all duration-200 hover:border-[#58adff]/30 hover:bg-[#58adff]/[0.03] dark:border-white/[0.06] dark:bg-white/[0.02] dark:hover:border-[#58adff]/25"
+                            >
+                              <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[#58adff]/15 bg-[#58adff]/8">
+                                <SubIcon size={15} strokeWidth={1.6} className="text-[#2f8fe6] dark:text-[#58adff]" />
+                              </div>
+                              <div className="min-w-0">
+                                <p className="text-[13px] font-semibold text-[#05070b] dark:text-white">
+                                  {sub.title}
+                                </p>
+                                {sub.tagline && (
+                                  <p className="mt-0.5 text-[11px] text-black/45 dark:text-white/40">
+                                    {sub.tagline}
+                                  </p>
+                                )}
+                              </div>
+                              <ArrowRight size={13} className="ml-auto mt-1 shrink-0 text-black/20 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-[#2f8fe6] dark:text-white/20 dark:group-hover:text-[#58adff]" />
+                            </Link>
+                          );
+                        })}
+                      </div>
                     )}
-
-                    {/* Description */}
-                    <p className="flex-1 text-[14px] leading-6 text-black/50 dark:text-white/50">
-                      {service.short_description}
-                    </p>
-
-                    {/* CTA */}
-                    <div className="mt-5 flex items-center gap-1.5 text-[13px] font-semibold text-[#2f8fe6] dark:text-[#58adff]">
-                      Learn more
-
-                      <ArrowRight
-                        size={14}
-                        className="transition-transform duration-200 group-hover:translate-x-1"
-                      />
-                    </div>
-                  </Link>
+                  </div>
                 );
               })}
             </div>

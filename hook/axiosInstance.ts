@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { AxiosRequestConfig, InternalAxiosRequestConfig } from "axios";
+import type { InternalAxiosRequestConfig } from "axios";
 
 import apiConfig from "../config/global.json";
 

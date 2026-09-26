@@ -55,10 +55,7 @@ export default function BlogPostDetail() {
   const { data: allPosts, loading, error, request: fetchAllPosts } = useAPI<BlogPost[]>();
 
   useEffect(() => {
-    if (!slug) {
-      navigate("/", { replace: true });
-      return;
-    }
+    if (!slug) return;
     fetchAllPosts(apiConfig.api.endpoints.blogPosts);
   }, [slug]);
 

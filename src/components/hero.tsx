@@ -9,7 +9,6 @@ import {
 import { useState, useEffect, useRef } from "react";
 import heroVidDark from "../assets/Hero_vid_dark.mp4";
 import heroVidLight from "../assets/Hero_vid_white.mp4";
-import heroVid1 from "../assets/Hero_vid_white.mp4";
 import { useTheme } from "../context/ThemeContext";
 
 const floatingCards = [

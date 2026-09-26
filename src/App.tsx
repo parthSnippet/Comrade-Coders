@@ -60,8 +60,7 @@
 import ComradeAIWidget from "./components/ComradeAIWidget";
 import CookieConsent from "./components/CookieConsent";
 import { useState } from "react";
-import { BrowserRouter, Navigate, Route, Routes, useLocation } from "react-router-dom";
-import { useEffect } from "react";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
 import Navbar from "./components/navbar";
 import Hero from "./components/hero";

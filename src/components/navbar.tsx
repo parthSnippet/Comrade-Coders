@@ -64,23 +64,19 @@ function Navbar() {
     services?.map((service) => ({
       label: service.title,
       href: `/services/${service.slug}`,
+      sub_services: service.sub_services ?? [],
     })) ?? [];
 
   const industryItems =
     industries?.map((industry) => ({
       label: industry.title,
       href: `/industries/${industry.slug}`,
+      sub_services: [],
     })) ?? [];
 
   const dropdownItems = [
-    {
-      label: "Services",
-      items: serviceItems,
-    },
-    {
-      label: "Industries",
-      items: industryItems,
-    },
+    { label: "Services", items: serviceItems },
+    { label: "Industries", items: industryItems },
   ];
 
   const openDropdown = (label: string) => {
@@ -224,26 +220,61 @@ function Navbar() {
                   </p>
 
                   {dropdown.items.map((item) => (
-                    <Link
-                      key={item.href}
-                      to={item.href}
-                      role="menuitem"
-                      aria-label={item.label}
-                      onClick={closeDropdown}
-                      className={[
-                        "group flex items-center justify-between rounded-xl border border-transparent px-3 py-2.5",
-                        "text-[13px] transition-all duration-200 ease-out",
-                        "text-black/60 hover:border-black/[0.08] hover:bg-black/[0.04] hover:text-black",
-                        "dark:text-white/60 dark:hover:border-white/[0.09] dark:hover:bg-white/[0.05] dark:hover:text-white",
-                      ].join(" ")}
-                    >
-                      {item.label}
+                    <div key={item.href} className="relative group/item">
+                      <Link
+                        to={item.href}
+                        role="menuitem"
+                        aria-label={item.label}
+                        onClick={closeDropdown}
+                        className={[
+                          "flex items-center justify-between rounded-xl border border-transparent px-3 py-2.5",
+                          "text-[13px] transition-all duration-200 ease-out",
+                          "text-black/60 hover:border-black/[0.08] hover:bg-black/[0.04] hover:text-black",
+                          "dark:text-white/60 dark:hover:border-white/[0.09] dark:hover:bg-white/[0.05] dark:hover:text-white",
+                        ].join(" ")}
+                      >
+                        {item.label}
+                        <ArrowUpRight
+                          size={13}
+                          className="opacity-0 transition-all duration-200 group-hover/item:translate-x-0.5 group-hover/item:-translate-y-0.5 group-hover/item:opacity-100"
+                        />
+                      </Link>
 
-                      <ArrowUpRight
-                        size={13}
-                        className="opacity-0 transition-all duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:opacity-100"
-                      />
-                    </Link>
+                      {/* Sub-services flyout */}
+                      {item.sub_services.length > 0 && (
+                        <div className={[
+                          "invisible absolute left-full top-0 ml-1 w-[220px] rounded-2xl border p-2",
+                          "opacity-0 scale-[0.97] transition-all duration-200 ease-out",
+                          "group-hover/item:visible group-hover/item:opacity-100 group-hover/item:scale-100",
+                          "border-black/[0.10] bg-white/95 shadow-[0_20px_55px_rgba(0,0,0,0.12)] backdrop-blur-2xl",
+                          "dark:border-white/[0.10] dark:bg-[#0c0c0c]/96 dark:shadow-[0_20px_55px_rgba(0,0,0,0.60)]",
+                        ].join(" ")}>
+                          <p className="mb-1 px-3 py-1.5 text-[9px] font-bold uppercase tracking-[0.20em] text-[#2f8fe6] dark:text-[#58adff]">
+                            {item.label}
+                          </p>
+                          {item.sub_services.map((sub) => (
+                            <Link
+                              key={sub.slug}
+                              to={`/services/${sub.slug}`}
+                              role="menuitem"
+                              onClick={closeDropdown}
+                              className={[
+                                "group/sub flex items-center justify-between rounded-xl border border-transparent px-3 py-2.5",
+                                "text-[13px] transition-all duration-200 ease-out",
+                                "text-black/60 hover:border-black/[0.08] hover:bg-black/[0.04] hover:text-black",
+                                "dark:text-white/60 dark:hover:border-white/[0.09] dark:hover:bg-white/[0.05] dark:hover:text-white",
+                              ].join(" ")}
+                            >
+                              {sub.title}
+                              <ArrowUpRight
+                                size={13}
+                                className="opacity-0 transition-all duration-200 group-hover/sub:translate-x-0.5 group-hover/sub:-translate-y-0.5 group-hover/sub:opacity-100"
+                              />
+                            </Link>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   ))}
                 </div>
               </div>
@@ -411,15 +442,31 @@ function Navbar() {
               {activeDropdown === dropdown.label && (
                 <div className="mb-2 ml-3 border-l border-black/[0.08] pl-2 dark:border-white/[0.09]">
                   {dropdown.items.map((item) => (
-                    <Link
-                      key={item.href}
-                      to={item.href}
-                      aria-label={item.label}
-                      onClick={() => setMobileOpen(false)}
-                      className="block rounded-xl px-4 py-2.5 text-sm text-black/50 transition-colors hover:bg-black/[0.04] hover:text-[#2f8fe6] dark:text-white/50 dark:hover:bg-white/[0.04] dark:hover:text-[#58adff]"
-                    >
-                      {item.label}
-                    </Link>
+                    <div key={item.href}>
+                      <Link
+                        to={item.href}
+                        aria-label={item.label}
+                        onClick={() => setMobileOpen(false)}
+                        className="block rounded-xl px-4 py-2.5 text-sm text-black/50 transition-colors hover:bg-black/[0.04] hover:text-[#2f8fe6] dark:text-white/50 dark:hover:bg-white/[0.04] dark:hover:text-[#58adff]"
+                      >
+                        {item.label}
+                      </Link>
+
+                      {item.sub_services.length > 0 && (
+                        <div className="ml-3 border-l border-black/[0.06] pl-2 dark:border-white/[0.07]">
+                          {item.sub_services.map((sub) => (
+                            <Link
+                              key={sub.slug}
+                              to={`/services/${sub.slug}`}
+                              onClick={() => setMobileOpen(false)}
+                              className="block rounded-xl px-4 py-2 text-[13px] text-black/40 transition-colors hover:bg-black/[0.04] hover:text-[#2f8fe6] dark:text-white/35 dark:hover:bg-white/[0.04] dark:hover:text-[#58adff]"
+                            >
+                              ↳ {sub.title}
+                            </Link>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   ))}
                 </div>
               )}

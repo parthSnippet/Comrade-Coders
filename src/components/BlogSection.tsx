@@ -37,9 +37,6 @@ export default function BlogSection() {
     .filter((p) => p.is_published)
     .slice(0, 3);
 
-  const getCategoryName = (category: BlogCategory | null) =>
-    category?.name ?? "Insights";
-
   if (published.length === 0) return null;
 
   return (

@@ -15,6 +15,7 @@ export const fallbackServices: Service[] = localServices.map((s, i) => ({
   use_cases: s.useCases.map((u) => ({ title: u.title, desc: u.desc })),
   image: null,
   icon: s.icon.displayName ?? null,
+  youtube_url: null,
   is_active: true,
   created_at: "",
   updated_at: "",
