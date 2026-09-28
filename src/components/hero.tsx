@@ -7,8 +7,6 @@ import {
   Workflow,
 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
-import heroVidDark from "../assets/Hero_vid_dark.mp4";
-import heroVidLight from "../assets/Hero_vid_white.mp4";
 import { useTheme } from "../context/ThemeContext";
 
 const floatingCards = [
@@ -198,8 +196,158 @@ function ParticleCanvas({
   );
 }
 
-function Hero() {
+function GlobOrb({ cursor }: { cursor: { x: number; y: number } }) {
   const { isDark } = useTheme();
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const rafRef = useRef(0);
+  const timeRef = useRef(0);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const SIZE = 420;
+    canvas.width = SIZE;
+    canvas.height = SIZE;
+    const cx = SIZE / 2;
+    const cy = SIZE / 2;
+    const R = 155;
+
+    // Latitude + longitude lines
+    const LAT_LINES = 9;
+    const LON_LINES = 12;
+
+    const draw = () => {
+      timeRef.current += 0.004;
+      const t = timeRef.current;
+
+      // tilt based on cursor (cursor is 0-100)
+      const tiltX = ((cursor.y - 50) / 50) * 0.35;
+      const tiltY = ((cursor.x - 50) / 50) * 0.35;
+
+      ctx.clearRect(0, 0, SIZE, SIZE);
+
+      // ── Outer glow ──
+      const glow = ctx.createRadialGradient(cx, cy, R * 0.5, cx, cy, R * 1.35);
+      glow.addColorStop(0, isDark ? "rgba(88,173,255,0.13)" : "rgba(50,143,232,0.10)");
+      glow.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.beginPath();
+      ctx.arc(cx, cy, R * 1.35, 0, Math.PI * 2);
+      ctx.fillStyle = glow;
+      ctx.fill();
+
+      // ── Globe sphere fill ──
+      const sphereGrad = ctx.createRadialGradient(cx - R * 0.3, cy - R * 0.3, R * 0.1, cx, cy, R);
+      if (isDark) {
+        sphereGrad.addColorStop(0, "rgba(30,60,100,0.55)");
+        sphereGrad.addColorStop(0.5, "rgba(10,20,45,0.70)");
+        sphereGrad.addColorStop(1, "rgba(5,10,25,0.85)");
+      } else {
+        sphereGrad.addColorStop(0, "rgba(200,225,255,0.60)");
+        sphereGrad.addColorStop(0.5, "rgba(160,200,245,0.50)");
+        sphereGrad.addColorStop(1, "rgba(100,160,230,0.40)");
+      }
+      ctx.beginPath();
+      ctx.arc(cx, cy, R, 0, Math.PI * 2);
+      ctx.fillStyle = sphereGrad;
+      ctx.fill();
+
+      // ── Helper: project 3D point on sphere to 2D canvas ──
+      const project = (lat: number, lon: number): [number, number, number] => {
+        // 3D point on unit sphere
+        let x = Math.cos(lat) * Math.sin(lon);
+        let y = Math.sin(lat);
+        let z = Math.cos(lat) * Math.cos(lon);
+        // apply tilt rotation (X axis)
+        const y1 = y * Math.cos(tiltX) - z * Math.sin(tiltX);
+        const z1 = y * Math.sin(tiltX) + z * Math.cos(tiltX);
+        y = y1; z = z1;
+        // apply tilt rotation (Y axis)
+        const x1 = x * Math.cos(tiltY) + z * Math.sin(tiltY);
+        const z2 = -x * Math.sin(tiltY) + z * Math.cos(tiltY);
+        x = x1;
+        return [cx + x * R, cy - y * R, z2];
+      };
+
+      const lineColor = (z: number) => {
+        const alpha = isDark
+          ? 0.12 + (z + 1) * 0.22
+          : 0.10 + (z + 1) * 0.18;
+        return isDark
+          ? `rgba(88,173,255,${alpha.toFixed(2)})`
+          : `rgba(50,143,232,${alpha.toFixed(2)})`;
+      };
+
+      const SEGMENTS = 64;
+
+      // ── Latitude lines ──
+      for (let i = 1; i < LAT_LINES; i++) {
+        const lat = -Math.PI / 2 + (Math.PI / LAT_LINES) * i;
+        ctx.beginPath();
+        let avgZ = 0;
+        for (let j = 0; j <= SEGMENTS; j++) {
+          const lon = (Math.PI * 2 / SEGMENTS) * j + t;
+          const [px, py, pz] = project(lat, lon);
+          avgZ += pz;
+          j === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+        }
+        ctx.closePath();
+        ctx.strokeStyle = lineColor(avgZ / SEGMENTS);
+        ctx.lineWidth = 0.8;
+        ctx.stroke();
+      }
+
+      // ── Longitude lines ──
+      for (let i = 0; i < LON_LINES; i++) {
+        const lon = (Math.PI * 2 / LON_LINES) * i + t;
+        ctx.beginPath();
+        let avgZ = 0;
+        for (let j = 0; j <= SEGMENTS; j++) {
+          const lat = -Math.PI / 2 + (Math.PI / SEGMENTS) * j;
+          const [px, py, pz] = project(lat, lon);
+          avgZ += pz;
+          j === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+        }
+        ctx.strokeStyle = lineColor(avgZ / SEGMENTS);
+        ctx.lineWidth = 0.8;
+        ctx.stroke();
+      }
+
+      // ── Highlight shimmer ──
+      const shimmer = ctx.createRadialGradient(cx - R * 0.38, cy - R * 0.38, 0, cx - R * 0.2, cy - R * 0.2, R * 0.7);
+      shimmer.addColorStop(0, isDark ? "rgba(255,255,255,0.10)" : "rgba(255,255,255,0.45)");
+      shimmer.addColorStop(1, "rgba(255,255,255,0)");
+      ctx.beginPath();
+      ctx.arc(cx, cy, R, 0, Math.PI * 2);
+      ctx.fillStyle = shimmer;
+      ctx.fill();
+
+      // ── Border ring ──
+      ctx.beginPath();
+      ctx.arc(cx, cy, R, 0, Math.PI * 2);
+      ctx.strokeStyle = isDark ? "rgba(88,173,255,0.18)" : "rgba(50,143,232,0.20)";
+      ctx.lineWidth = 1.2;
+      ctx.stroke();
+
+      rafRef.current = requestAnimationFrame(draw);
+    };
+
+    draw();
+    return () => cancelAnimationFrame(rafRef.current);
+  }, [isDark, cursor]);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      className="h-full w-full"
+      style={{ imageRendering: "crisp-edges" }}
+    />
+  );
+}
+
+function Hero() {
 
   const [cursor, setCursor] = useState({
     x: 50,
@@ -318,48 +466,31 @@ function Hero() {
             </div>
           </div>
 
-          {/* RIGHT VISUAL */}
-          <div className="relative mx-auto w-full max-w-[500px] animate-fadein-right">
+          {/* RIGHT VISUAL — Interactive Glob */}
+          <div className="relative mx-auto w-full max-w-[460px] animate-fadein-right">
             <div className="relative aspect-square">
 
-              {/* Center Video */}
-              <div className="absolute left-1/2 top-1/2 z-20 h-[220px] w-[220px] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-full shadow-[0_0_60px_rgba(88,173,255,0.20)] sm:h-[260px] sm:w-[260px]">
-                <video
-                  key={isDark ? "dark" : "light"}
-                  src={isDark ? heroVidDark : heroVidLight}
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                  className="h-full w-full object-cover"
-                />
+              {/* Glob */}
+              <div className="absolute left-1/2 top-1/2 z-10 h-[340px] w-[340px] -translate-x-1/2 -translate-y-1/2 sm:h-[400px] sm:w-[400px]">
+                <GlobOrb cursor={cursor} />
               </div>
 
               {/* Floating Cards */}
               {floatingCards.map((item) => {
                 const Icon = item.icon;
-
                 return (
                   <div
                     key={item.label}
                     className={`absolute z-20 ${item.pos} animate-float flex items-center gap-3 rounded-2xl border border-black/[0.08] bg-white/90 px-4 py-3 shadow-[0_6px_20px_rgba(0,0,0,0.08)] dark:border-white/[0.10] dark:bg-[#0d1520]/90 dark:shadow-[0_6px_20px_rgba(0,0,0,0.30)]`}
                     style={{
                       animationDelay: item.delay,
-                      transform: `translate(${(cursor.x - 50) * 0.45}px, ${
-                        (cursor.y - 50) * 0.45
-                      }px)`,
-                      transition:
-                        "transform 0.18s ease-out",
+                      transform: `translate(${(cursor.x - 50) * 0.45}px, ${(cursor.y - 50) * 0.45}px)`,
+                      transition: "transform 0.18s ease-out",
                     }}
                   >
                     <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-[#58adff]/15 bg-[#58adff]/10">
-                      <Icon
-                        size={16}
-                        strokeWidth={1.7}
-                        className="text-[#58adff]"
-                      />
+                      <Icon size={16} strokeWidth={1.7} className="text-[#58adff]" />
                     </div>
-
                     <span className="flex flex-col">
                       <span className="text-xs font-semibold text-black/80 dark:text-white/85">{item.label}</span>
                       <span className="text-[10px] text-black/40 dark:text-white/40">{item.sub}</span>
