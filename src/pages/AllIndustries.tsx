@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 
 import Navbar from "../components/navbar";
 import Footer from "../components/Footer";
+import SEOHead from "../components/SEOHead";
 
 import useAPI from "../../hook/useAPI";
 import apiConfig from "../../config/global.json";
@@ -28,6 +29,11 @@ export default function AllIndustries() {
 
   return (
     <div className="min-h-screen bg-white text-[#05070b] dark:bg-[#05070b] dark:text-white">
+      <SEOHead
+        title="Industries We Serve"
+        description="Comrade Coders builds technology shaped around your industry — healthcare, e-commerce, education, finance, logistics, and more."
+        canonical="/industries"
+      />
       <Navbar />
 
       <main>

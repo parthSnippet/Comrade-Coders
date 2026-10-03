@@ -1,70 +1,45 @@
+
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- Primary SEO -->
+    <!-- Default fallback metadata; page-specific SEO is managed by SEOHead.tsx -->
     <title>Comrade Coders – Software Development & IT Solutions</title>
     <meta
       name="description"
-      content="Comrade Coders delivers premium software development, web development, AI platforms, ERP, CRM, and IT solutions for startups, e-commerce, healthcare, and more."
+      content="Comrade Coders delivers software development, web development, automation, AI platforms, ERP, CRM, and IT solutions for businesses."
     />
-    <meta
-      name="keywords"
-      content="software development, web development, AI platforms, ERP, CRM, IT solutions, automation, Comrade Coders"
-    />
-    <meta name="author" content="Comrade Coders" />
-    <meta name="robots" content="index, follow" />
-    <link rel="canonical" href="https://www.comerade-coders.com/" />
-
-    <!-- Open Graph (Facebook / LinkedIn) -->
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://www.comerade-coders.com/" />
-    <meta
-      property="og:title"
-      content="Comrade Coders – Software Development & IT Solutions"
-    />
-    <meta
-      property="og:description"
-      content="Premium software development, AI platforms, ERP, CRM, and IT solutions tailored for modern businesses."
-    />
-    <meta property="og:image" content="/CClogo.png" />
-    <meta property="og:site_name" content="Comrade Coders" />
-
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@ComEradeCoders" />
-    <meta
-      name="twitter:title"
-      content="Comrade Coders – Software Development & IT Solutions"
-    />
-    <meta
-      name="twitter:description"
-      content="Premium software development, AI platforms, ERP, CRM, and IT solutions tailored for modern businesses."
-    />
-    <meta name="twitter:image" content="/logoCC.png" />
 
     <!-- Font preconnect -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@500;600;700;800&display=swap" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@500;600;700;800&display=swap"
+    />
 
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="/CClogo.png" />
+    <link rel="icon" type="image/png" href="/CClogo.png" sizes="any" />
     <link rel="apple-touch-icon" href="/CClogo.png" />
 
     <!-- Theme -->
     <meta name="theme-color" content="#080808" />
   </head>
+
   <script>
     (function () {
-      var t = localStorage.getItem('theme');
-      if (t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-        document.documentElement.classList.add('dark');
+      var t = localStorage.getItem("theme");
+      if (
+        t === "dark" ||
+        (!t && window.matchMedia("(prefers-color-scheme: dark)").matches)
+      ) {
+        document.documentElement.classList.add("dark");
       }
     })();
   </script>
+
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>

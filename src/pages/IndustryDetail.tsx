@@ -4,6 +4,8 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 
 import Navbar from "../components/navbar";
 import Footer from "../components/Footer";
+import SEOHead from "../components/SEOHead";
+import InlineLoader from "../components/InlineLoader";
 
 import useAPI from "../../hook/useAPI";
 import apiConfig from "../../config/global.json";
@@ -38,12 +40,7 @@ export default function IndustryDetail() {
     return (
       <div className="min-h-screen bg-white text-[#05070b] dark:bg-[#05070b] dark:text-white">
         <Navbar />
-        <main className="flex min-h-[70vh] items-center justify-center px-5">
-          <div className="flex flex-col items-center gap-4">
-            <div className="h-10 w-10 animate-spin rounded-full border-2 border-black/10 border-t-[#2f8fe6] dark:border-white/10 dark:border-t-[#58adff]" />
-            <p className="text-sm text-black/50 dark:text-white/50">Loading industry...</p>
-          </div>
-        </main>
+        <InlineLoader />
         <Footer />
       </div>
     );
@@ -71,6 +68,11 @@ export default function IndustryDetail() {
 
   return (
     <div className="min-h-screen bg-white text-[#05070b] dark:bg-[#05070b] dark:text-white">
+      <SEOHead
+        title={displayIndustry.title}
+        description={displayIndustry.short_description || displayIndustry.description}
+        canonical={`/industries/${displayIndustry.slug}`}
+      />
       <Navbar />
 
       <main className="page-transition">

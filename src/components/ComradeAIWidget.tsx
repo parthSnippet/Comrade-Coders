@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { FormEvent } from "react";
 import {
   ArrowUpRight,
@@ -38,19 +38,6 @@ export default function ComradeAIWidget() {
   const [submitted, setSubmitted] = useState(false);
 
   const { loading, error, request } = useAPI<ComradeAIResponse>();
-
-  useEffect(() => {
-    const hasSeenWidget = sessionStorage.getItem("comrade-ai-seen");
-
-    if (hasSeenWidget) return;
-
-    const timer = window.setTimeout(() => {
-      setOpen(true);
-      sessionStorage.setItem("comrade-ai-seen", "true");
-    }, 900);
-
-    return () => window.clearTimeout(timer);
-  }, []);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
